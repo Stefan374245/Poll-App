@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Survey, SurveyOption, CreateSurveyPayload, Vote, SurveyFilter } from '../models';
+import { Survey, SurveyOption, SurveyQuestion, CreateSurveyPayload, Vote, SurveyFilter } from '../models';
 
-/** Maximum number of options per survey. */
+/** Maximum number of options per question. */
 const MAX_OPTIONS = 10;
 
 /** Generates a simple unique ID. */
@@ -41,13 +41,19 @@ export class SurveyService {
 
   /** Creates a new survey from payload. */
   createSurvey(payload: CreateSurveyPayload, creatorId: string): Survey {
-    const options = this.buildOptions(payload.options);
+    const questions: SurveyQuestion[] = payload.questions.map(q => ({
+      id: generateId(),
+      text: q.text,
+      allowMultiple: q.allowMultiple,
+      options: this.buildOptions(q.options),
+    }));
+
     const survey: Survey = {
       id: generateId(),
       title: payload.title,
       description: payload.description,
-      question: payload.question,
-      options,
+      category: payload.category,
+      questions,
       createdAt: new Date(),
       deadline: payload.deadline,
       creatorId,
@@ -62,40 +68,71 @@ export class SurveyService {
     return this.surveysSignal().find(s => s.id === id);
   }
 
-  /** Casts a vote for a survey option. */
-  vote(surveyId: string, optionId: string, userId: string): void {
-    if (this.hasUserVoted(surveyId, userId)) {
+  /** Casts a vote for a question's option. */
+  vote(surveyId: string, questionId: string, optionId: string, userId: string): void {
+    if (this.hasUserVotedQuestion(surveyId, questionId, userId)) {
       return;
     }
     const newVote: Vote = {
       surveyId,
+      questionId,
       optionId,
       userId,
       votedAt: new Date(),
     };
     this.votesSignal.update(v => [...v, newVote]);
-    this.incrementVoteCount(surveyId, optionId);
+    this.incrementVoteCount(surveyId, questionId, optionId);
   }
 
-  /** Checks if user already voted in a survey. */
-  hasUserVoted(surveyId: string, userId: string): boolean {
+  /** Casts votes for multiple questions at once. */
+  voteAll(surveyId: string, selections: Map<string, string[]>, userId: string): void {
+    selections.forEach((optionIds, questionId) => {
+      for (const optionId of optionIds) {
+        this.vote(surveyId, questionId, optionId, userId);
+      }
+    });
+  }
+
+  /** Checks if user already voted for a specific question. */
+  hasUserVotedQuestion(surveyId: string, questionId: string, userId: string): boolean {
     return this.votesSignal().some(
-      v => v.surveyId === surveyId && v.userId === userId
+      v => v.surveyId === surveyId && v.questionId === questionId && v.userId === userId,
     );
   }
 
-  /** Returns total votes for a survey. */
-  getTotalVotes(surveyId: string): number {
+  /** Checks if user has completed the full survey (voted in all questions). */
+  hasUserVoted(surveyId: string, userId: string): boolean {
+    const survey = this.getSurveyById(surveyId);
+    if (!survey) return false;
+    return survey.questions.every(q =>
+      this.hasUserVotedQuestion(surveyId, q.id, userId),
+    );
+  }
+
+  /** Returns total votes for a specific question. */
+  getQuestionTotalVotes(surveyId: string, questionId: string): number {
     const survey = this.getSurveyById(surveyId);
     if (!survey) return 0;
-    return survey.options.reduce((sum, opt) => sum + opt.voteCount, 0);
+    const question = survey.questions.find(q => q.id === questionId);
+    if (!question) return 0;
+    return question.options.reduce((sum, opt) => sum + opt.voteCount, 0);
+  }
+
+  /** Returns total unique voters for a survey. */
+  getTotalVotes(surveyId: string): number {
+    const voters = new Set(
+      this.votesSignal()
+        .filter(v => v.surveyId === surveyId)
+        .map(v => v.userId),
+    );
+    return voters.size;
   }
 
   /** Deactivates expired surveys. */
   deactivateExpired(): void {
     const now = new Date();
     this.surveysSignal.update(list =>
-      list.map(s => this.checkExpired(s, now))
+      list.map(s => this.checkExpired(s, now)),
     );
   }
 
@@ -130,12 +167,25 @@ export class SurveyService {
     }));
   }
 
-  private incrementVoteCount(surveyId: string, optionId: string): void {
+  private incrementVoteCount(surveyId: string, questionId: string, optionId: string): void {
     this.surveysSignal.update(list =>
-      list.map(s => s.id === surveyId
-        ? { ...s, options: s.options.map(o => o.id === optionId ? { ...o, voteCount: o.voteCount + 1 } : o) }
-        : s
-      )
+      list.map(s =>
+        s.id === surveyId
+          ? {
+              ...s,
+              questions: s.questions.map(q =>
+                q.id === questionId
+                  ? {
+                      ...q,
+                      options: q.options.map(o =>
+                        o.id === optionId ? { ...o, voteCount: o.voteCount + 1 } : o,
+                      ),
+                    }
+                  : q,
+              ),
+            }
+          : s,
+      ),
     );
   }
 
