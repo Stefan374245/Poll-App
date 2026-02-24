@@ -1,12 +1,15 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  inject,
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InputComponent, SelectOption } from '../../shared/components/input/input';
 import { BtnComponent } from '../../shared/components/btn/btn';
+import { SurveyService } from '../../core/services/survey.service';
+import { CreateSurveyPayload } from '../../core/models';
 
 /** Single answer model. */
 interface Answer {
@@ -50,18 +53,19 @@ export class SurveyCreateComponent {
 
   /** Available categories. */
   readonly categories: SelectOption[] = [
-    { value: 'technology', label: 'Technology' },
-    { value: 'sports', label: 'Sports' },
-    { value: 'lifestyle', label: 'Lifestyle' },
-    { value: 'education', label: 'Education' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'health', label: 'Health' },
+    { value: 'team-activities', label: 'Team Activities' },
+    { value: 'health & wellness', label: 'Health & Wellness' },
+    { value: 'gaming & entertainment', label: 'Gaming & Entertainment' },
+    { value: 'education & learning', label: 'Education & Learning' },
+    { value: 'lifestyle & preferences', label: 'Lifestyle & Preferences' },
+    { value: 'technology & innovation', label: 'Technology & Innovation' },
   ];
 
   /** Questions list. */
   readonly questions = signal<Question[]>([
     {
       id: 1,
+
       text: '',
       allowMultiple: false,
       answers: [
@@ -78,7 +82,10 @@ export class SurveyCreateComponent {
   /** Alphabet for answer labels. */
   readonly alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly surveyService: SurveyService,
+  ) {}
 
   // ---------------------------------------------------------------------------
   // Question actions
@@ -169,16 +176,21 @@ export class SurveyCreateComponent {
   // Form actions
   // ---------------------------------------------------------------------------
 
-  /** Publishes the survey (placeholder). */
+  /** Publishes the survey via SurveyService. */
   publish(): void {
-    // TODO: wire to SurveyService
-    console.log('Publishing survey:', {
-      name: this.surveyName(),
+    const payload: CreateSurveyPayload = {
+      title: this.surveyName(),
       description: this.description(),
-      endDate: this.endDate(),
       category: this.category(),
-      questions: this.questions(),
-    });
+      questions: this.questions().map(q => ({
+        text: q.text,
+        allowMultiple: q.allowMultiple,
+        options: q.answers.map(a => a.text),
+      })),
+      deadline: this.endDate() ? new Date(this.endDate()) : null,
+    };
+
+    this.surveyService.createSurvey(payload, 'current-user');
     this.router.navigate(['/']);
   }
 

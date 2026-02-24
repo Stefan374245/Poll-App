@@ -28,7 +28,7 @@
             label="Survey name"
             [showDelete]="true"
             [ngModel]="surveyName()"
-            (ngModelChange)="surveyName.set($event)"
+            (valueChange)="surveyName.set($event)"
           />
 
           <div class="create__row create__row--sub">
@@ -38,7 +38,7 @@
               [optional]="true"
               [showDelete]="true"
               [ngModel]="endDate()"
-              (ngModelChange)="endDate.set($event)"
+              (valueChange)="endDate.set($event)"
             />
             <app-input
               label="Choose category"
@@ -46,7 +46,7 @@
               [options]="categories"
               placeholder="Choose category"
               [ngModel]="category()"
-              (ngModelChange)="category.set($event)"
+              (valueChange)="category.set($event)"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@
             [showDelete]="true"
             [rows]="4"
             [ngModel]="description()"
-            (ngModelChange)="description.set($event)"
+            (valueChange)="description.set($event)"
           />
         </div>
       </div>
