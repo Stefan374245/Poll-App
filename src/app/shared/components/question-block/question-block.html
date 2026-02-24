@@ -1,0 +1,48 @@
+<div class="question-block" [class.question-block--readonly]="readonly()">
+  <!-- Question heading -->
+  <h3 class="question-block__heading">
+    <span class="question-block__number">{{ questionNumber() }}.</span>
+    {{ question().text }}
+  </h3>
+
+  <!-- Multi-select hint -->
+  @if (question().allowMultiple) {
+    <p class="question-block__hint">
+      <img
+        src="images/edit%20%26%26%20checkbox/checked.svg"
+        alt=""
+        class="question-block__hint-icon"
+        aria-hidden="true"
+      />
+      More than one answers are possible.
+    </p>
+  }
+
+  <!-- Answer options -->
+  <ul class="question-block__options" role="listbox" [attr.aria-multiselectable]="question().allowMultiple">
+    @for (opt of question().options; track opt.id; let i = $index) {
+      <li class="question-block__option" role="option" [attr.aria-selected]="isSelected(opt.id)">
+        <button
+          type="button"
+          class="question-block__option-btn"
+          [class.question-block__option-btn--selected]="isSelected(opt.id)"
+          [disabled]="readonly()"
+          (click)="toggleOption(opt.id)"
+        >
+          <!-- Checkbox / radio indicator -->
+          <span class="question-block__check" aria-hidden="true">
+            @if (isSelected(opt.id)) {
+              <img src="images/edit%20%26%26%20checkbox/checked.svg" alt="" class="question-block__check-img" />
+            } @else {
+              <span class="question-block__check-empty"></span>
+            }
+          </span>
+
+          <!-- Letter + label -->
+          <span class="question-block__letter">{{ alphabet[i] }}.</span>
+          <span class="question-block__label">{{ opt.label }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+</div>

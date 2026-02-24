@@ -1,0 +1,11 @@
+<div class="result-bar">
+  <span class="result-bar__letter">{{ label() }}</span>
+  <div class="result-bar__track">
+    <div
+      class="result-bar__fill"
+      [class.result-bar__fill--secondary]="variant() === 'secondary'"
+      [style.width.%]="percentage()"
+    ></div>
+  </div>
+  <span class="result-bar__pct">{{ percentage() }}%</span>
+</div>

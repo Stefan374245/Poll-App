@@ -1,0 +1,137 @@
+@use "styles/abstract/variables" as v;
+
+.question-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  // -------------------------------------------------------------------------
+  // Heading
+  // -------------------------------------------------------------------------
+  &__heading {
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.3;
+    color: v.$text-primary;
+    margin: 0;
+  }
+
+  &__number {
+    font-weight: 400;
+  }
+
+  // -------------------------------------------------------------------------
+  // Hint (multi-select)
+  // -------------------------------------------------------------------------
+  &__hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: v.$text-primary;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  &__hint-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+  }
+
+  // -------------------------------------------------------------------------
+  // Options list
+  // -------------------------------------------------------------------------
+  &__options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__option {
+    margin: 0;
+  }
+
+  // -------------------------------------------------------------------------
+  // Option button
+  // -------------------------------------------------------------------------
+  &__option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Mulish', sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    color: v.$text-primary;
+    transition: opacity v.$transition-fast;
+
+    &:hover:not(:disabled) {
+      opacity: 0.7;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &--selected {
+      font-weight: 600;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Checkbox / radio indicator
+  // -------------------------------------------------------------------------
+  &__check {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__check-img {
+    width: 18px;
+    height: 18px;
+  }
+
+  &__check-empty {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid v.$text-primary;
+    border-radius: 3px;
+  }
+
+  // -------------------------------------------------------------------------
+  // Letter + label
+  // -------------------------------------------------------------------------
+  &__letter {
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 22px;
+  }
+
+  &__label {
+    flex: 1;
+    text-align: left;
+  }
+
+  // -------------------------------------------------------------------------
+  // Read-only mode
+  // -------------------------------------------------------------------------
+  &--readonly {
+    .question-block__option-btn {
+      pointer-events: none;
+    }
+  }
+}

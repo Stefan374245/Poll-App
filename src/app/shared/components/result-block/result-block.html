@@ -1,0 +1,15 @@
+<div class="result-block">
+  <h4 class="result-block__heading">
+    {{ questionNumber() }}. {{ question().text }}
+  </h4>
+
+  <div class="result-block__bars">
+    @for (opt of question().options; track opt.id; let i = $index) {
+      <app-result-bar
+        [label]="alphabet[i]"
+        [percentage]="percent(opt.voteCount)"
+        [variant]="i % 2 === 0 ? 'primary' : 'secondary'"
+      />
+    }
+  </div>
+</div>

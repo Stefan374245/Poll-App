@@ -1,0 +1,51 @@
+@use "styles/abstract/variables" as v;
+
+.result-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+
+  // Letter label (A, B, C…)
+  &__letter {
+    flex-shrink: 0;
+    width: 16px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: v.$text-primary;
+  }
+
+  // Track background
+  &__track {
+    flex: 1;
+    height: 14px;
+    background: v.$dark-bg;
+    border-radius: 7px;
+    overflow: hidden;
+  }
+
+  // Fill bar
+  &__fill {
+    height: 100%;
+    background: v.$primary-btn;
+    border-radius: 7px;
+    transition: width 0.5s ease;
+    min-width: 0;
+
+    &--secondary {
+      background: v.$primary-btn-light;
+    }
+  }
+
+  // Percentage text
+  &__pct {
+    flex-shrink: 0;
+    width: 36px;
+    text-align: right;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: v.$text-primary;
+  }
+}
