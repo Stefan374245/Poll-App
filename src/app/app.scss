@@ -1,3 +1,5 @@
+@use '../styles/abstract/variables' as v;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -11,6 +13,6 @@
 
 .app-main {
   flex: 1;
-  background: #f8f8fc;
+  background: v.$primary;
   overflow-y: auto;
 }
