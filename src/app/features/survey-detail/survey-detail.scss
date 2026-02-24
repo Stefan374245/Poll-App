@@ -7,7 +7,6 @@
 
   &__header {
     margin-bottom: v.$spacing-2xl;
-
     h1 { font-size: 1.5rem; margin-bottom: v.$spacing-sm; }
   }
 
@@ -17,24 +16,16 @@
     color: v.$text-primary;
     text-decoration: none;
     font-size: 0.9rem;
-
     &:hover { text-decoration: underline; }
   }
 
-  &__desc {
-    color: v.$text-primary;
-    opacity: 0.7;
-  }
+  &__desc { color: v.$text-primary; opacity: 0.7; }
 
   &__question {
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: v.$spacing-lg;
-    }
+    h2 { font-size: 1.2rem; margin-bottom: v.$spacing-lg; }
   }
 
   &__options {
-    padding: 0;
     display: flex;
     flex-direction: column;
     gap: v.$spacing-sm;
@@ -52,19 +43,14 @@
     color: v.$text-primary;
     transition: border-color v.$transition-base, background-color v.$transition-base;
 
-    &:hover {
-      border-color: v.$primary-btn;
-    }
-
+    &:hover { border-color: v.$primary-btn; }
     &.selected {
       border-color: v.$primary-btn;
       background-color: v.$primary-btn-light;
     }
   }
 
-  &__vote-btn {
-    margin-top: v.$spacing-lg;
-  }
+  &__vote-btn { margin-top: v.$spacing-lg; }
 
   &__results {
     display: flex;
@@ -72,16 +58,8 @@
     gap: v.$spacing-lg;
   }
 
-  &__total {
-    font-weight: 700;
-    margin-top: v.$spacing-md;
-  }
-
-  &__not-found {
-    text-align: center;
-    padding: v.$spacing-3xl;
-    opacity: 0.6;
-  }
+  &__total { font-weight: 700; margin-top: v.$spacing-md; }
+  &__not-found { text-align: center; padding: v.$spacing-3xl; opacity: 0.6; }
 }
 
 .result-bar {
@@ -107,9 +85,5 @@
     transition: width 0.4s ease;
   }
 
-  &__count {
-    font-size: 0.8rem;
-    color: v.$text-primary;
-    opacity: 0.5;
-  }
+  &__count { font-size: 0.8rem; color: v.$text-primary; opacity: 0.5; }
 }

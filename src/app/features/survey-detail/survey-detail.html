@@ -9,7 +9,6 @@
     <section class="detail__question">
       <h2>{{ s.question }}</h2>
 
-      <!-- Voting form -->
       @if (!hasVoted() && s.isActive) {
         <div class="detail__options" role="radiogroup" aria-label="Answer options">
           @for (opt of s.options; track opt.id) {
@@ -30,12 +29,9 @@
           class="btn btn--primary detail__vote-btn"
           [disabled]="!selectedOption()"
           (click)="submitVote()"
-        >
-          Vote
-        </button>
+        >Vote</button>
       }
 
-      <!-- Results -->
       @if (hasVoted() || !s.isActive) {
         <div class="detail__results" aria-label="Results">
           @for (opt of s.options; track opt.id) {
@@ -45,10 +41,7 @@
                 <span>{{ percent(opt.voteCount) }}%</span>
               </div>
               <div class="result-bar__track">
-                <div
-                  class="result-bar__fill"
-                  [style.width.%]="percent(opt.voteCount)"
-                ></div>
+                <div class="result-bar__fill" [style.width.%]="percent(opt.voteCount)"></div>
               </div>
               <span class="result-bar__count">{{ opt.voteCount }} votes</span>
             </div>
