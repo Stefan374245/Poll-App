@@ -1,0 +1,360 @@
+@use 'styles/abstract/variables' as v;
+@use 'styles/abstract/mixin' as m;
+
+// ==========================================================================
+// Create new survey – page layout
+// ==========================================================================
+
+.create {
+  @include m.flex-column(32px);
+  max-width: 1052px;
+  margin: 0 auto;
+  padding: v.$spacing-xl 54px;
+
+  // -----------------------------------------------------------------------
+  // Header row (title group + cancel button)
+  // -----------------------------------------------------------------------
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+  }
+
+  &__title-group {
+    @include m.flex-column(0);
+    align-items: flex-start;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 12px 3px 8px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: #221227;
+    background: v.$primary-btn-light;
+    border-radius: 0 14px 0 0;
+  }
+
+  &__title {
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 68px;
+    color: #ee9236;
+  }
+
+  &__cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 21px;
+    color: v.$text-base;
+    background: v.$secondary-btn-light;
+    border: none;
+    border-radius: v.$radius-lg;
+    cursor: pointer;
+    transition: background v.$transition-base;
+
+    &:hover {
+      background: rgba(255, 183, 112, 0.45);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Form area
+  // -----------------------------------------------------------------------
+  &__form {
+    @include m.flex-column(0);
+    align-items: center;
+    padding: 40px 32px;
+    gap: 64px;
+    background: rgba(142, 112, 153, 0.16);
+    border-radius: 5px 80px 5px 5px;
+    width: 100%;
+  }
+
+  &__fields {
+    @include m.flex-column(64px);
+    width: 100%;
+    max-width: 986px;
+  }
+
+  // -----------------------------------------------------------------------
+  // Top row: survey meta fields
+  // -----------------------------------------------------------------------
+  &__row {
+    display: flex;
+    gap: 64px;
+    width: 100%;
+
+    &--top {
+      align-items: flex-start;
+    }
+
+    &--sub {
+      gap: 8px;
+    }
+  }
+
+  &__col {
+    @include m.flex-column(8px);
+
+    &--left {
+      flex: 1 1 470px;
+      min-width: 0;
+    }
+
+    &--right {
+      flex: 1 1 452px;
+      min-width: 0;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Questions section
+  // -----------------------------------------------------------------------
+  &__questions {
+    @include m.flex-column(0);
+    gap: 48px;
+    width: 100%;
+  }
+
+  &__question-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 36px;
+    width: 100%;
+  }
+
+  &__question {
+    @include m.flex-column(24px);
+    flex: 0 0 429px;
+    min-width: 0;
+  }
+
+  &__question-field {
+    @include m.flex-column(8px);
+    width: 100%;
+  }
+
+  &__question-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__question-label {
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    color: v.$text-base;
+  }
+
+  // -----------------------------------------------------------------------
+  // Native input (used inline for question & answer fields)
+  // -----------------------------------------------------------------------
+  &__input {
+    width: 100%;
+    height: 37px;
+    padding: 7px 13px;
+    font-family: 'Mulish', sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    color: v.$text-primary;
+    background: #fefdff;
+    border: none;
+    border-radius: 5px 20px 5px 5px;
+    outline: none;
+    transition: box-shadow v.$transition-base;
+
+    &::placeholder {
+      color: v.$text-primary;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px v.$secondary-btn-light;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Answers
+  // -----------------------------------------------------------------------
+  &__answers {
+    @include m.flex-column(16px);
+    width: 100%;
+  }
+
+  &__answers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  &__answers-label {
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    color: v.$text-base;
+  }
+
+  // Custom checkbox
+  &__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  &__checkbox-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 21px;
+    height: 21px;
+    padding: 3px;
+
+    input[type='checkbox'] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &__checkbox-mark {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #ffffff;
+    border-radius: 3px;
+    transition:
+      background v.$transition-fast,
+      border-color v.$transition-fast;
+
+    input:checked + & {
+      background: v.$primary-btn;
+      border-color: v.$primary-btn;
+    }
+  }
+
+  &__checkbox-text {
+    font-family: 'Mulish', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #ffffff;
+  }
+
+  // Answer row (letter + input + delete)
+  &__answer-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  &__answer-letter {
+    flex-shrink: 0;
+    width: 23px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    color: v.$text-base;
+  }
+
+  // -----------------------------------------------------------------------
+  // Add answer link button
+  // -----------------------------------------------------------------------
+  &__add-answer {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 0 0 26px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 21px;
+    color: v.$text-base;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      bottom: -4px;
+      left: 26px;
+      width: 117px;
+      height: 0;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: v.$text-base;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Small icon buttons (delete)
+  // -----------------------------------------------------------------------
+  &__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 4px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: v.$text-base;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background v.$transition-fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    svg {
+      width: 17px;
+      height: 20px;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Bottom actions row
+  // -----------------------------------------------------------------------
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 986px;
+  }
+}

@@ -8,6 +8,11 @@ export const routes: Routes = [
       import('./features/home/home').then(m => m.HomeComponent),
   },
   {
+    path: 'create',
+    loadComponent: () =>
+      import('./features/survey-create/survey-create').then(m => m.SurveyCreateComponent),
+  },
+  {
     path: 'survey/:id',
     loadComponent: () =>
       import('./features/survey-detail/survey-detail').then(m => m.SurveyDetailComponent),

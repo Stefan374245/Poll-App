@@ -1,0 +1,173 @@
+<section class="create">
+  <!-- ===== Header row ===== -->
+  <div class="create__header">
+    <div class="create__title-group">
+      <span class="create__badge">Draft</span>
+      <h1 class="create__title">Create new survey</h1>
+    </div>
+
+    <button class="create__cancel" type="button" (click)="cancel()">
+      <span>Cancel</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ===== Form area ===== -->
+  <div class="create__form">
+    <div class="create__fields">
+
+      <!-- Row 1: Survey name + End date + Category | Describing text -->
+      <div class="create__row create__row--top">
+        <!-- Left column -->
+        <div class="create__col create__col--left">
+          <app-input
+            label="Survey name"
+            [showDelete]="true"
+            [ngModel]="surveyName()"
+            (ngModelChange)="surveyName.set($event)"
+          />
+
+          <div class="create__row create__row--sub">
+            <app-input
+              label="Set end date"
+              type="date"
+              [optional]="true"
+              [showDelete]="true"
+              [ngModel]="endDate()"
+              (ngModelChange)="endDate.set($event)"
+            />
+            <app-input
+              label="Choose category"
+              type="select"
+              [options]="categories"
+              placeholder="Choose category"
+              [ngModel]="category()"
+              (ngModelChange)="category.set($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Right column: Describing text -->
+        <div class="create__col create__col--right">
+          <app-input
+            label="Describing text"
+            type="textarea"
+            [optional]="true"
+            [showDelete]="true"
+            [rows]="4"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Row 2: Questions -->
+      <div class="create__questions">
+        @for (question of questions(); track question.id; let qi = $index) {
+          <div class="create__question-block">
+            <div class="create__question">
+              <!-- Question header + input -->
+              <div class="create__question-field">
+                <div class="create__question-label-row">
+                  <span class="create__question-label">{{ qi + 1 }}. Question</span>
+                  <button
+                    class="create__icon-btn"
+                    type="button"
+                    aria-label="Delete question"
+                    (click)="deleteQuestion(question.id)"
+                  >
+                    <svg width="17" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6" /><path d="M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                    </svg>
+                  </button>
+                </div>
+                <input
+                  class="create__input"
+                  type="text"
+                  [placeholder]="'Which data would work best for you?'"
+                  [value]="question.text"
+                  (input)="onQuestionTextChange(question.id, $any($event.target).value)"
+                />
+              </div>
+
+              <!-- Answers section -->
+              <div class="create__answers">
+                <div class="create__answers-header">
+                  <span class="create__answers-label">Answers</span>
+                  <label class="create__checkbox">
+                    <span class="create__checkbox-box">
+                      <input
+                        type="checkbox"
+                        [checked]="question.allowMultiple"
+                        (change)="toggleMultiple(question.id)"
+                      />
+                      <span class="create__checkbox-mark"></span>
+                    </span>
+                    <span class="create__checkbox-text">Allow multiple answers.</span>
+                  </label>
+                </div>
+
+                <!-- Answer rows -->
+                @for (answer of question.answers; track answer.id; let ai = $index) {
+                  <div class="create__answer-row">
+                    <span class="create__answer-letter">{{ alphabet[ai] }}.</span>
+                    <input
+                      class="create__input"
+                      type="text"
+                      [value]="answer.text"
+                      (input)="onAnswerTextChange(question.id, answer.id, $any($event.target).value)"
+                    />
+                    <button
+                      class="create__icon-btn"
+                      type="button"
+                      aria-label="Delete answer"
+                      (click)="deleteAnswer(question.id, answer.id)"
+                    >
+                      <svg width="17" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6" /><path d="M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                      </svg>
+                    </button>
+                  </div>
+                }
+
+                <!-- Add answer link -->
+                <button class="create__add-answer" type="button" (click)="addAnswer(question.id)">
+                  <span>Add answer</span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+                             10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Add next question button (secondary) -->
+            <app-btn
+              variant="secondary"
+              icon="add"
+              label="Add next question"
+              (click)="addQuestion()"
+            />
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Publish button (bottom right) -->
+    <div class="create__actions">
+      <app-btn variant="primary" label="Publish" (click)="publish()" />
+    </div>
+  </div>
+</section>
