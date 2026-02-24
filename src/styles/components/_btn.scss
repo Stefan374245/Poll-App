@@ -1,0 +1,173 @@
+// ==========================================================================
+// Buttons – Global button base & variant styles
+// ==========================================================================
+
+@use "../abstract/variables" as v;
+@use "sass:color";
+
+// -------------------------------------------------------------------------
+// Base – shared by all variants
+// -------------------------------------------------------------------------
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: v.$radius-md;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------
+// Primary – orange filled
+// -------------------------------------------------------------------------
+.btn--primary {
+  background-color: v.$primary-btn;
+  color: v.$text-primary;
+  padding: 14px 24px;
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-btn-light;
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust(v.$primary-btn, $lightness: -8%);
+  }
+}
+
+// -------------------------------------------------------------------------
+// Secondary – light outline / transparent
+// -------------------------------------------------------------------------
+.btn--secondary {
+  background-color: v.$primary-btn-light;
+  color: v.$text-primary;
+  padding: 14px 24px;
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-btn;
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust(v.$primary-btn-light, $lightness: -6%);
+  }
+}
+
+// -------------------------------------------------------------------------
+// Tertiary – two sub-variants via modifier
+// -------------------------------------------------------------------------
+.btn--tertiary {
+  padding: 14px 24px;
+  border-radius: 24px;
+
+  // Light variant (default)
+  background-color: v.$primary-btn-light;
+  color: v.$text-primary;
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-btn;
+  }
+
+  // Dark sub-variant
+  &.btn--dark {
+    background-color: v.$primary;
+    color: v.$text-secondary;
+
+    &:hover:not(:disabled) {
+      background-color: color.adjust(v.$primary, $lightness: 10%);
+    }
+  }
+}
+
+// -------------------------------------------------------------------------
+// Filter – pill-style toggle
+// -------------------------------------------------------------------------
+.btn--filter {
+  background-color: v.$primary-btn-light;
+  color: v.$text-primary;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 0.875rem;
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-btn;
+  }
+
+  &.btn--active {
+    background-color: v.$primary-btn;
+    font-weight: 700;
+  }
+}
+
+// -------------------------------------------------------------------------
+// Status – Published / Draft badges
+// -------------------------------------------------------------------------
+.btn--status {
+  padding: 6px 16px;
+  border-radius: 24px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: default;
+
+  &.btn--published {
+    background-color: v.$primary-btn;
+    color: v.$text-primary;
+  }
+
+  &.btn--draft {
+    background-color: v.$light-bg;
+    color: v.$text-primary;
+    border: 1px solid v.$dark-bg;
+  }
+}
+
+// -------------------------------------------------------------------------
+// Icon-only – delete, edit, etc.
+// -------------------------------------------------------------------------
+.btn--icon {
+  background-color: transparent;
+  padding: 8px;
+  border: 1px solid v.$dark-bg;
+  border-radius: v.$radius-md;
+
+  .btn__icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: v.$primary-hover;
+    border-color: v.$primary;
+  }
+
+  // Active / selected state (e.g. edit confirm)
+  &.btn--active {
+    background-color: v.$primary-btn;
+    border-color: v.$primary-btn;
+  }
+}

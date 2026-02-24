@@ -1,0 +1,23 @@
+<section class="your-surveys" aria-label="Your surveys">
+  <h2 class="your-surveys__title">Your surveys</h2>
+
+  <!-- Ending soon highlights -->
+  @if (endingSoon().length > 0) {
+    <div class="your-surveys__highlights">
+      <h3 class="your-surveys__section-title">Ending soon surveys</h3>
+      <div class="your-surveys__cards">
+        @for (survey of endingSoon(); track survey.id) {
+          <app-highlights-card
+            [surveyId]="survey.id"
+            [title]="survey.title"
+            [category]="survey.description"
+            [deadline]="survey.deadline!"
+          />
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Full survey list with filters -->
+  <app-survey-list />
+</section>

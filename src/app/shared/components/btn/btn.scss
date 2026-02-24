@@ -1,0 +1,24 @@
+// Component-level styles — host receives global `.btn` classes from _btn.scss
+// This file handles only inner layout concerns.
+
+:host {
+  display: inline-flex;
+}
+
+.btn__inner {
+  // Inherit all styles from host (global .btn classes)
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  cursor: inherit;
+  border-radius: inherit;
+}

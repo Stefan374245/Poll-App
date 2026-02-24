@@ -1,0 +1,46 @@
+<section class="survey-list" aria-label="Survey list">
+  <!-- Filter bar -->
+  <nav class="survey-list__toolbar" aria-label="Filter surveys">
+    <div class="survey-list__filters">
+      <app-btn
+        variant="filter"
+        label="Active survey"
+        [active]="filter() === 'active'"
+        (click)="setFilter('active')"
+      />
+      <app-btn
+        variant="filter"
+        label="Past survey"
+        [active]="filter() === 'past'"
+        (click)="setFilter('past')"
+      />
+    </div>
+    <span class="survey-list__sort">Sort by categories &#9662;</span>
+  </nav>
+
+  <!-- Survey cards grid -->
+  @if (surveys().length === 0) {
+    <p class="survey-list__empty">No surveys found.</p>
+  } @else {
+    <div class="survey-list__grid">
+      @for (survey of surveys(); track survey.id) {
+        <article class="survey-card" [routerLink]="['/survey', survey.id]">
+          <div class="survey-card__header">
+            <app-category-tag [label]="survey.description" variant="dark" />
+            @if (survey.isActive) {
+              <span class="survey-card__badge survey-card__badge--published">Published</span>
+            } @else {
+              <span class="survey-card__badge survey-card__badge--draft">Draft</span>
+            }
+          </div>
+          <h3 class="survey-card__title">{{ survey.title }}</h3>
+          <footer class="survey-card__footer">
+            @if (survey.deadline) {
+              <app-countdown-badge [label]="getCountdown(survey.deadline)" />
+            }
+          </footer>
+        </article>
+      }
+    </div>
+  }
+</section>

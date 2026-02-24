@@ -1,0 +1,19 @@
+<aside class="toast-container" aria-live="polite" aria-label="Notifications">
+  @for (toast of toasts(); track toast.id) {
+    <article
+      class="toast"
+      [class]="'toast toast--' + toast.type"
+      role="alert"
+    >
+      <p>{{ toast.message }}</p>
+      <button
+        type="button"
+        class="toast__close"
+        (click)="onDismiss(toast.id)"
+        aria-label="Dismiss notification"
+      >
+        &times;
+      </button>
+    </article>
+  }
+</aside>

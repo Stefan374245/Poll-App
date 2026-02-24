@@ -1,0 +1,75 @@
+
+$primary: #35273A;
+$primary-light: #ffcfa1;
+$primary-hover: #F4E9FB;
+
+$primary-btn: #FFB770;
+$primary-btn-light: #FFCFA1;
+$secondary-btn-light: #FFB77060;
+
+$text-primary: #35273A;
+$text-secondary: #FFB770;
+$text-base: #FFFFFF;
+
+// Colors – Backgrounds
+$light-bg: #f8f8fc;
+$dark-bg: #f0f0f5;
+$card-bg: #ffffff;
+
+// Colors – Semantic
+$success: #28a745;
+$success-bg: #d4edda;
+$success-text: #155724;
+$error: #e74c3c;
+$error-bg: #f8d7da;
+$error-text: #721c24;
+$info: #17a2b8;
+$info-bg: #d1ecf1;
+$info-text: #0c5460;
+$warning: #ffc107;
+$warning-bg: #fff3cd;
+$warning-text: #856404;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 0.75rem;
+$spacing-lg: 1rem;
+$spacing-xl: 1.5rem;
+$spacing-2xl: 2rem;
+$spacing-3xl: 3rem;
+
+// Border Radius
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 10px;
+$radius-xl: 12px;
+$radius-round: 50%;
+
+// Shadows
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 2px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+// Layout
+$header-height: 60px;
+$sidebar-width: 220px;
+$max-width: 1440px;
+$content-max-width: 960px;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease-out;
+
+// Z-index
+$z-toast: 1000;
+$z-modal: 500;
+$z-header: 100;

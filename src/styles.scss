@@ -1,0 +1,11 @@
+// ==========================================================================
+// Global Styles Entry Point
+// ==========================================================================
+
+// Base
+@use "styles/base/fonts";
+@use "styles/base/reset";
+
+// Components
+@use "styles/components/components";
+@use "styles/components/btn";

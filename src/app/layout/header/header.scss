@@ -1,0 +1,30 @@
+@use 'styles/abstract/variables' as v;
+
+.app-header {
+  background: v.$primary;
+  color: #ffffff;
+  padding: 1.5rem 1.5rem;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.25rem;
+  margin-right: 2rem;
+
+  strong {
+    color: #6c63ff;
+  }
+}

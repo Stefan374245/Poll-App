@@ -1,0 +1,41 @@
+@use "styles/abstract/variables" as v;
+
+.your-surveys {
+  max-width: v.$max-width;
+  margin: 0 auto;
+  padding: v.$spacing-2xl;
+  background-color: v.$primary;
+
+  &__title {
+    font-family: 'Nerko One', cursive;
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    color: v.$text-primary;
+    text-align: center;
+    margin: 0 0 v.$spacing-2xl;
+  }
+
+  &__section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: v.$text-primary;
+    margin: 0 0 v.$spacing-lg;
+  }
+
+  &__highlights {
+    margin-bottom: v.$spacing-2xl;
+    padding-bottom: v.$spacing-2xl;
+    border-bottom: 1px solid v.$dark-bg;
+  }
+
+  &__cards {
+    display: flex;
+    gap: v.$spacing-lg;
+    overflow-x: auto;
+    padding-bottom: v.$spacing-sm;
+
+    // Hide scrollbar but keep scroll functionality
+    scrollbar-width: thin;
+    scrollbar-color: v.$dark-bg transparent;
+  }
+}

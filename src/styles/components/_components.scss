@@ -1,0 +1,312 @@
+// ==========================================================================
+// Components – Reusable global component styles
+// ==========================================================================
+
+@use '../abstract/variables' as v;
+@use '../abstract/svg';
+
+// -------------------------------------------------------------------------
+// Header
+// -------------------------------------------------------------------------
+.main-header {
+  padding: 24px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: v.$max-width;
+  margin: 0 auto;
+
+  &--single {
+    justify-content: flex-start;
+  }
+
+  &__title {
+    margin: 0;
+  }
+}
+
+// -------------------------------------------------------------------------
+// Table Wrapper
+// -------------------------------------------------------------------------
+.product-table-wrapper {
+  background-color: v.$light-bg;
+  padding: 24px;
+  box-sizing: border-box;
+  width: clamp(400px, 100%, v.$max-width);
+  margin: 0 auto;
+}
+
+// -------------------------------------------------------------------------
+// Table
+// -------------------------------------------------------------------------
+.product-table {
+  text-align: left;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+
+  > thead {
+    color: v.$primary;
+
+    th {
+      border-bottom: 2px solid v.$primary;
+    }
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: v.$dark-bg;
+  }
+
+  tbody tr:hover {
+    cursor: pointer;
+    background-color: v.$primary-hover !important;
+  }
+
+  td,
+  th {
+    padding: 16px 24px;
+  }
+
+  td:nth-child(1) {
+    font-weight: bold;
+  }
+
+  td:nth-child(5) {
+    align-content: center;
+    text-align: center;
+  }
+
+  @media (max-width: v.$breakpoint-md) {
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(5),
+    td:nth-child(5) {
+      display: none;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------
+// Buttons
+// -------------------------------------------------------------------------
+.btn {
+  text-decoration: none;
+  border: none;
+  color: black;
+  display: flex;
+  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  padding: 16px 24px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &--primary {
+    background-color: v.$primary-btn;
+
+    &:hover {
+      background-color: v.$primary;
+      color: white;
+
+      svg {
+        filter: invert(1);
+      }
+    }
+  }
+
+  &--secondary {
+    background-color: transparent;
+
+    &:hover {
+      background-color: v.$primary-btn-light;
+    }
+  }
+}
+
+// Icon buttons generated from SVG map
+$btn-icons: (
+  'view': 'view',
+  'edit': 'edit',
+  'close': 'close',
+  'check': 'check',
+  'delete': 'delete',
+);
+
+@each $key, $icon-name in $btn-icons {
+  .btn--#{$key} {
+    display: block;
+    border: none;
+    background-color: transparent;
+    height: 26px;
+    width: 26px;
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: v.$primary;
+    }
+  }
+
+  .btn--view {
+    height: 24px;
+    width: 32px;
+    background-size: 22px;
+  }
+
+  // -------------------------------------------------------------------------
+  // Product Detail
+  // -------------------------------------------------------------------------
+  .product-detail {
+    width: clamp(400px, 100%, v.$max-width);
+    margin: 0 auto;
+    padding: 20px 24px;
+    background-color: v.$light-bg;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+
+      > div {
+        display: flex;
+        gap: 8px;
+        flex-direction: row;
+      }
+    }
+
+    section {
+      padding: 8px 16px;
+
+      h2,
+      h3 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: v.$primary;
+      }
+    }
+
+    dl,
+    dt,
+    dd {
+      margin: 0;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    dt {
+      font-size: 24px;
+      font-weight: 700;
+      color: v.$primary;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Product Form
+  // -------------------------------------------------------------------------
+  .product-form {
+    width: clamp(400px, 100%, v.$max-width);
+    margin: 0 auto;
+    padding: 20px 24px;
+    background-color: v.$light-bg;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    > form {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      > a {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
+
+    label {
+      font-size: 18px;
+      font-weight: 700;
+      color: v.$primary;
+    }
+
+    input,
+    textarea {
+      background-color: transparent;
+      font-size: 16px;
+
+      &:focus {
+        outline: 1px solid v.$primary;
+      }
+    }
+
+    input {
+      border: none;
+      border-bottom: 2px solid v.$primary;
+    }
+
+    textarea {
+      border: 2px solid v.$primary;
+      resize: none;
+    }
+
+    &__error {
+      color: red;
+    }
+
+    fieldset {
+      width: 100%;
+      position: relative;
+      border: none;
+
+      legend {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+    }
+
+    &__fieldset--vert {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+    }
+
+    &__fieldset--hori {
+      display: flex;
+      gap: 16px;
+    }
+
+    @media (max-width: v.$breakpoint-md) {
+      &__fieldset--hori {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 16px;
+      }
+    }
+  }
+}

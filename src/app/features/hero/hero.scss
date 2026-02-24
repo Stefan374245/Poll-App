@@ -1,0 +1,118 @@
+@use "styles/abstract/variables" as v;
+
+.hero {
+  background-color: v.$primary;
+  color: v.$text-secondary;
+  padding: 4rem v.$spacing-2xl;
+
+  &__content {
+    max-width: v.$max-width;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-2xl;
+  }
+
+  &__text {
+    flex: 1;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-lg;
+  }
+
+  &__title {
+    font-family: 'Nerko One', cursive;
+    color: v.$text-secondary;
+    font-style: italic;
+        font-size: 56px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  // -----------------------------------------------------------------------
+  // Illustration (right side)
+  // -----------------------------------------------------------------------
+  &__visual {
+    flex: 0 0 auto;
+    position: relative;
+    width: 280px;
+    height: 320px;
+  }
+
+  &__notes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__note {
+    position: absolute;
+   width: 420px;
+    height: auto;
+    border-radius: v.$radius-md;
+    box-shadow: v.$shadow-md;
+
+    &--1 {
+      top: 0;
+      left: 20px;
+      z-index: 3;
+    }
+    &--2 {
+      top: 40px;
+      left: 80px;
+      z-index: 2;
+    }
+    &--3 {
+      top: 80px;
+      left: 40px;
+      z-index: 1;
+    }
+  }
+
+  &__question {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    z-index: 10;
+  }
+
+  &__star {
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+    z-index: 10;
+  }
+
+  // -----------------------------------------------------------------------
+  // Responsive
+  // -----------------------------------------------------------------------
+  @media (max-width: v.$breakpoint-md) {
+    &__content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    &__text {
+      align-items: center;
+    }
+
+    &__visual {
+      width: 200px;
+      height: 240px;
+    }
+
+    &__note {
+      width: 120px;
+    }
+  }
+}

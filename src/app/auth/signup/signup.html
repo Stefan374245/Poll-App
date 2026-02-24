@@ -1,0 +1,57 @@
+<section class="auth-page" aria-label="Sign Up">
+  <article class="auth-card">
+    <h1>Sign Up</h1>
+    <form (ngSubmit)="onSignup()" #signupForm="ngForm" novalidate>
+      <div class="form-group">
+        <label for="displayName">
+          Display Name <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          id="displayName"
+          type="text"
+          name="displayName"
+          [(ngModel)]="displayName"
+          required
+          minlength="2"
+          autocomplete="name"
+          aria-required="true"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">
+          E-Mail <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          email
+          autocomplete="email"
+          aria-required="true"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">
+          Password <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          aria-required="true"
+        />
+      </div>
+      <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+      <p class="alt-action">
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
+    </form>
+  </article>
+</section>

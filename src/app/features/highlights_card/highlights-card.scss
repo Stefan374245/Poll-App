@@ -1,0 +1,27 @@
+@use "styles/abstract/variables" as v;
+
+.highlight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: v.$card-bg;
+  border-radius: 0 80px 0 0;
+  padding: 40px 18px;
+  width: 321px;
+  height: 310px;
+  cursor: pointer;
+  transition: box-shadow v.$transition-base, transform v.$transition-base;
+
+  &:hover {
+    box-shadow: v.$shadow-md;
+    transform: translateY(-2px);
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: v.$text-primary;
+    margin: 0;
+    line-height: 1.3;
+  }
+}

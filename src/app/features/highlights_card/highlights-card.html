@@ -1,0 +1,7 @@
+<article class="highlight-card" [routerLink]="['/survey', surveyId()]">
+  @if (category()) {
+    <app-category-tag [label]="category()" />
+  }
+  <h3 class="highlight-card__title">{{ title() }}</h3>
+  <app-countdown-badge [label]="countdownLabel()" [isUrgent]="isUrgent()" />
+</article>
