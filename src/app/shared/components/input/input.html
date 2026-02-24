@@ -1,0 +1,72 @@
+<div class="input-field">
+  <!-- Label -->
+  @if (label()) {
+    <label class="input-field__label">
+      {{ label() }}
+      @if (optional()) {
+        <span class="input-field__optional">(optional)</span>
+      }
+    </label>
+  }
+
+  <div class="input-field__row">
+    <!-- Text / Number / Date -->
+    @if (type() === 'text' || type() === 'number' || type() === 'date') {
+      <input
+        class="input-field__control"
+        [type]="type()"
+        [placeholder]="placeholder()"
+        [value]="value()"
+        [disabled]="disabled() || isDisabled()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      />
+    }
+
+    <!-- Textarea -->
+    @if (type() === 'textarea') {
+      <textarea
+        class="input-field__control input-field__control--textarea"
+        [placeholder]="placeholder()"
+        [rows]="rows()"
+        [value]="value()"
+        [disabled]="disabled() || isDisabled()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      ></textarea>
+    }
+
+    <!-- Select -->
+    @if (type() === 'select') {
+      <select
+        class="input-field__control input-field__control--select"
+        [value]="value()"
+        [disabled]="disabled() || isDisabled()"
+        (change)="onSelect($event)"
+        (blur)="onBlur()"
+      >
+        <option value="" disabled selected>{{ placeholder() || 'Select...' }}</option>
+        @for (opt of options(); track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    }
+
+    <!-- Delete icon (optional) -->
+    @if (showDelete()) {
+      <button
+        class="input-field__delete"
+        type="button"
+        aria-label="Delete"
+        (click)="deleteClick.emit()"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6" /><path d="M14 11v6" />
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        </svg>
+      </button>
+    }
+  </div>
+</div>
