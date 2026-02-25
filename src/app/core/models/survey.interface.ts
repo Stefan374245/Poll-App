@@ -56,11 +56,61 @@ export interface CreateSurveyPayload {
  * Tracks which user voted for which option in which question.
  */
 export interface Vote {
+  id: string;
   surveyId: string;
   questionId: string;
   optionId: string;
   userId: string;
   votedAt: Date;
+}
+
+/**
+ * Survey option enriched with voting statistics.
+ */
+export interface SurveyOptionWithVotes extends SurveyOption {
+  percentage: number;
+  isUserChoice: boolean;
+}
+
+/**
+ * Survey question with calculated results.
+ */
+export interface SurveyQuestionWithResults extends SurveyQuestion {
+  options: SurveyOptionWithVotes[];
+  totalVotes: number;
+}
+
+/**
+ * Survey statistics aggregated from votes.
+ */
+export interface SurveyStatistics {
+  totalParticipants: number;
+  totalVotes: number;
+  lastVoteAt: Date | null;
+}
+
+/**
+ * Survey with complete nested data from database join.
+ */
+export interface SurveyWithDetails extends Survey {
+  creator: {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+  };
+  statistics: SurveyStatistics | null;
+  userHasVoted: boolean;
+}
+
+/**
+ * Time remaining calculation for survey deadline.
+ */
+export interface DeadlineInfo {
+  isUrgent: boolean;
+  hoursRemaining: number;
+  daysRemaining: number;
+  hasExpired: boolean;
+  formattedTime: string;
 }
 
 /** Status filter for survey lists. */
