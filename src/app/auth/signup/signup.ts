@@ -19,6 +19,7 @@ export class SignupComponent {
   displayName = '';
   email = '';
   password = '';
+  isLoading = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -27,9 +28,32 @@ export class SignupComponent {
   ) {}
 
   /** Handles signup form submission. */
-  onSignup(): void {
-    this.authService.signup(this.displayName, this.email, this.password);
-    this.toastService.success('Account created successfully');
-    this.router.navigate(['/']);
+  async onSignup(): Promise<void> {
+    if (!this.displayName || !this.email || !this.password) {
+      this.toastService.error('Please fill in all fields');
+      return;
+    }
+
+    if (this.password.length < 6) {
+      this.toastService.error('Password must be at least 6 characters');
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      console.log('Attempting signup...', { email: this.email, displayName: this.displayName });
+      
+      await this.authService.signup(this.displayName, this.email, this.password);
+      
+      console.log('Signup successful, redirecting...');
+      this.toastService.success('Account created successfully');
+      this.router.navigate(['/']);
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      this.toastService.error(error.message || 'An error occurred during signup. Please try again.');
+    } finally {
+      this.isLoading = false;
+    }
   }
 }

@@ -18,6 +18,7 @@ import { ToastService } from '../../core/services';
 export class LoginComponent {
   email = '';
   password = '';
+  isLoading = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -26,16 +27,47 @@ export class LoginComponent {
   ) {}
 
   /** Handles login form submission. */
-  onLogin(): void {
-    this.authService.login(this.email, this.password);
-    this.toastService.success('Logged in successfully');
-    this.router.navigate(['/']);
+  async onLogin(): Promise<void> {
+    if (!this.email || !this.password) {
+      this.toastService.error('Please enter email and password');
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      console.log('Attempting login...', { email: this.email });
+      
+      await this.authService.login(this.email, this.password);
+      
+      console.log('Login successful, redirecting...');
+      this.toastService.success('Logged in successfully');
+      this.router.navigate(['/']);
+    } catch (error: any) {
+      console.error('Login error:', error);
+      this.toastService.error(error.message || 'Invalid email or password. Please try again.');
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   /** Handles guest login. */
-  onGuestLogin(): void {
-    this.authService.loginAsGuest();
-    this.toastService.info('Logged in as Guest');
-    this.router.navigate(['/']);
+  async onGuestLogin(): Promise<void> {
+    this.isLoading = true;
+
+    try {
+      console.log('Attempting guest login...');
+      
+      await this.authService.loginAsGuest();
+      
+      console.log('Guest login successful, redirecting...');
+      this.toastService.info('Logged in as Guest');
+      this.router.navigate(['/']);
+    } catch (error: any) {
+      console.error('Guest login error:', error);
+      this.toastService.error('Failed to sign in as guest. Please try again.');
+    } finally {
+      this.isLoading = false;
+    }
   }
 }
