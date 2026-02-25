@@ -74,6 +74,7 @@ export class SurveyService {
       return;
     }
     const newVote: Vote = {
+      id: generateId(),
       surveyId,
       questionId,
       optionId,
