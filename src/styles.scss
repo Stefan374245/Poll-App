@@ -1,11 +1,22 @@
 // ==========================================================================
-// Global Styles Entry Point
+// Main Styles Entry Point
 // ==========================================================================
 
-// Base
-@use "styles/base/fonts";
-@use "styles/base/reset";
+// Import fonts first
+@use 'styles/base/fonts';
 
-// Components
-@use "styles/components/components";
-@use "styles/components/btn";
+// Import reset/normalize
+@use 'styles/base/reset';
+
+// Import variables
+@use 'styles/abstract/variables' as v;
+
+// Import components
+@use 'styles/components/components';
+
+// Global container styles
+body {
+  max-width: v.$breakpoint-xxl;
+  margin: 0 auto;
+  background-color: v.$primary;
+}

@@ -1,0 +1,83 @@
+// ==========================================================================
+// Reusable Animations
+// ==========================================================================
+// Usage: Import and use mixins in any component that needs slide-in effects
+// Example: @include a.slide-element('right', 0.1s, 0.3s);
+// ==========================================================================
+
+@use "variables" as v;
+
+// Keyframes: Slide in from right
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Keyframes: Slide in from left
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// ==========================================================================
+// Mixin: Slide Element
+// ==========================================================================
+// Apply to elements that should slide in on hover
+// @param {String} $direction - 'left' or 'right'
+// @param {Time} $delay - Animation delay (default: 0s)
+// @param {Time} $duration - Animation duration (default: 0.3s)
+// ==========================================================================
+@mixin slide-element($direction: 'right', $delay: 0s, $duration: 0.3s) {
+  // Initial state: hidden and offset
+  opacity: 0;
+
+  @if $direction == 'right' {
+    transform: translateX(100%);
+  } @else {
+    transform: translateX(-100%);
+  }
+
+  // Smooth transition for hover-out
+  transition: opacity v.$transition-slow, transform v.$transition-slow;
+
+  // Hover state: trigger animation
+  @if $direction == 'right' {
+    animation: slide-in-from-right $duration ease-out $delay forwards;
+  } @else {
+    animation: slide-in-from-left $duration ease-out $delay forwards;
+  }
+}
+
+// Keyframes: Slide from center and scale up
+@keyframes slide-in-from-center {
+  from {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(var(--slide-x, 0), var(--slide-y, 0)) scale(1);
+    opacity: 1;
+  }
+}
+
+@mixin slide-from-center($delay: 0s, $duration: 0.3s) {
+  // Initial state: hidden and scaled down
+  opacity: 0;
+  transform: translate(0, 0) scale(0);
+  transition: opacity v.$transition-slow, transform v.$transition-slow;
+
+  // Hover state: trigger animation
+  animation: slide-in-from-center $duration ease-out $delay forwards;
+}

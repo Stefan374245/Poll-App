@@ -4,6 +4,7 @@
 
 @use '../abstract/variables' as v;
 @use '../abstract/svg';
+@use './btn';
 
 // -------------------------------------------------------------------------
 // Header
@@ -87,135 +88,61 @@
 }
 
 // -------------------------------------------------------------------------
-// Buttons
+// Product Detail
 // -------------------------------------------------------------------------
-.btn {
-  text-decoration: none;
-  border: none;
-  color: black;
-  display: flex;
-  gap: 8px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  padding: 16px 24px;
+.product-detail {
+  width: clamp(400px, 100%, v.$max-width);
+  margin: 0 auto;
+  padding: 20px 24px;
+  background-color: v.$light-bg;
 
-  &:hover {
-    cursor: pointer;
-  }
+  &__header {
+    display: flex;
+    justify-content: space-between;
 
-  &--primary {
-    background-color: v.$primary-btn;
-
-    &:hover {
-      background-color: v.$primary;
-      color: white;
-
-      svg {
-        filter: invert(1);
-      }
-    }
-  }
-
-  &--secondary {
-    background-color: transparent;
-
-    &:hover {
-      background-color: v.$primary-btn-light;
-    }
-  }
-}
-
-// Icon buttons generated from SVG map
-$btn-icons: (
-  'view': 'view',
-  'edit': 'edit',
-  'close': 'close',
-  'check': 'check',
-  'delete': 'delete',
-);
-
-@each $key, $icon-name in $btn-icons {
-  .btn--#{$key} {
-    display: block;
-    border: none;
-    background-color: transparent;
-    height: 26px;
-    width: 26px;
-    border-radius: 4px;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 14px;
-
-    &:hover {
-      cursor: pointer;
-      background-color: v.$primary;
-    }
-  }
-
-  .btn--view {
-    height: 24px;
-    width: 32px;
-    background-size: 22px;
-  }
-
-  // -------------------------------------------------------------------------
-  // Product Detail
-  // -------------------------------------------------------------------------
-  .product-detail {
-    width: clamp(400px, 100%, v.$max-width);
-    margin: 0 auto;
-    padding: 20px 24px;
-    background-color: v.$light-bg;
-
-    &__header {
+    > div {
       display: flex;
-      justify-content: space-between;
-
-      > div {
-        display: flex;
-        gap: 8px;
-        flex-direction: row;
-      }
+      gap: 8px;
+      flex-direction: row;
     }
+  }
 
-    section {
-      padding: 8px 16px;
+  section {
+    padding: 8px 16px;
 
-      h2,
-      h3 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 700;
-        color: v.$primary;
-      }
-    }
-
-    dl,
-    dt,
-    dd {
+    h2,
+    h3 {
       margin: 0;
-    }
-
-    dl {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 16px;
-      align-items: center;
-    }
-
-    dt {
       font-size: 24px;
       font-weight: 700;
       color: v.$primary;
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Product Form
-  // -------------------------------------------------------------------------
-  .product-form {
+  dl,
+  dt,
+  dd {
+    margin: 0;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  dt {
+    font-size: 24px;
+    font-weight: 700;
+    color: v.$primary;
+  }
+}
+
+// -------------------------------------------------------------------------
+// Product Form
+// -------------------------------------------------------------------------
+.product-form {
     width: clamp(400px, 100%, v.$max-width);
     margin: 0 auto;
     padding: 20px 24px;
@@ -309,4 +236,4 @@ $btn-icons: (
       }
     }
   }
-}
+
