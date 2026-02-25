@@ -1,4 +1,5 @@
 @use "styles/abstract/variables" as v;
+@use "styles/abstract/animations" as a;
 
 .hero {
   background-color: v.$primary;
@@ -11,7 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: v.$spacing-2xl;
+    gap: 80px;
   }
 
   &__text {
@@ -56,23 +57,12 @@
   }
 
   &__note {
-    position: absolute;
    width: 420px;
     height: auto;
 
-    &--1 {
-      top: 0;
-      left: 20px;
-      z-index: 3;
-    }
-    &--2 {
-      top: 40px;
-      left: 80px;
-      z-index: 2;
-    }
     &--3 {
       top: 80px;
-      left: 40px;
+      left: 0px;
       z-index: 1;
     }
   }
@@ -89,6 +79,88 @@
     bottom: 0;
     left: 30px;
     z-index: 10;
+  }
+
+  // -----------------------------------------------------------------------
+  // Animated SVG Icons - Base Styles
+  // All icons start in the center (on note3) and slide to positions
+  // -----------------------------------------------------------------------
+  &__question,
+  &__typing,
+  &__check,
+  &__star {
+    width: auto;
+    height: 70px;
+    // Initial state: in center of note3, hidden, scaled down
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+    transition: opacity v.$transition-slow, transform v.$transition-slow;
+    // Start from center of visual area
+    top: 50%;
+    left: 50%;
+    margin-top: -35px; // Half of height for centering
+    margin-left: -35px;
+  }
+
+  // Question mark: top right
+  &__question {
+    z-index: 10;
+    height: 75px;
+    margin-top: -37.5px;
+    margin-left: -37.5px;
+    --slide-x: 140px;
+    --slide-y: -136px;
+  }
+
+  // Typing bubble: left, mid
+  &__typing {
+    z-index: 9;
+    height: 60px;
+    margin-top: -30px;
+    margin-left: -45px; // Wider SVG
+    --slide-x: 56px;
+    --slide-y: 64px;
+  }
+
+  // Check mark: right, middle
+  &__check {
+    z-index: 8;
+    height: 70px;
+    margin-top: -35px;
+    margin-left: -35px;
+    --slide-x: 280px;
+    --slide-y: 164px;
+  }
+
+  // Star: bottom left
+  &__star {
+    z-index: 7;
+    height: 65px;
+    margin-top: -32.5px;
+    margin-left: -32.5px;
+    --slide-x: -80px;
+    --slide-y: 100px;
+  }
+
+  // -----------------------------------------------------------------------
+  // Hover Effect: Staggered Slide-out Animation from Center
+  // -----------------------------------------------------------------------
+  &__visual:hover {
+    .hero__question {
+      @include a.slide-from-center(0s, 0.5s);
+    }
+
+    .hero__typing {
+      @include a.slide-from-center(0.1s, 0.5s);
+    }
+
+    .hero__check {
+      @include a.slide-from-center(0.2s, 0.5s);
+    }
+
+    .hero__star {
+      @include a.slide-from-center(0.3s, 0.5s);
+    }
   }
 
   // -----------------------------------------------------------------------
@@ -111,6 +183,44 @@
 
     &__note {
       width: 120px;
+    }
+
+    // Scale down animated icons on mobile
+    &__question,
+    &__typing,
+    &__check,
+    &__star {
+      height: 50px;
+      margin-top: -25px;
+      margin-left: -25px;
+    }
+
+    &__question {
+      height: 55px;
+      margin-top: -27.5px;
+      --slide-x: 90px;
+      --slide-y: -90px;
+    }
+
+    &__typing {
+      height: 45px;
+      margin-top: -22.5px;
+      margin-left: -30px;
+      --slide-x: -100px;
+      --slide-y: -30px;
+    }
+
+    &__check {
+      height: 50px;
+      --slide-x: 90px;
+      --slide-y: 25px;
+    }
+
+    &__star {
+      height: 48px;
+      margin-top: -24px;
+      --slide-x: -70px;
+      --slide-y: 80px;
     }
   }
 }

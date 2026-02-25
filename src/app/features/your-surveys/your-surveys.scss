@@ -9,8 +9,9 @@
   &__title {
     font-family: 'Nerko One', cursive;
     font-style: italic;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    color: v.$text-primary;
+    font-size: 72px;
+    font-weight: 400;
+    color: v.$text-secondary;
     text-align: center;
     margin: 0 0 v.$spacing-2xl;
   }
@@ -18,7 +19,7 @@
   &__section-title {
     font-size: 1.05rem;
     font-weight: 600;
-    color: v.$text-primary;
+    color: v.$text-base;
     margin: 0 0 v.$spacing-lg;
   }
 
