@@ -2,6 +2,30 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.5.
 
+## Setup
+
+### Environment Configuration
+
+Before running the application, you need to configure the Supabase credentials:
+
+1. Copy the environment template files:
+   ```bash
+   cp src/environments/environment.template.ts src/environments/environment.ts
+   cp src/environments/environment.prod.template.ts src/environments/environment.prod.ts
+   ```
+
+2. Edit both files and replace the placeholder values with your actual Supabase credentials:
+   - `supabaseUrl`: Your Supabase project URL
+   - `supabaseKey`: Your Supabase anon/public key
+
+3. Get your credentials from your [Supabase Dashboard](https://app.supabase.com) under Project Settings > API
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
 ## Development server
 
 To start a local development server, run:
