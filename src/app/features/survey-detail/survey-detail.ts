@@ -8,9 +8,12 @@ import { SupabaseService } from '../../core/services/supabase/supabase.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { BtnComponent } from '../../shared/components/btn/btn';
-import { CategoryTagComponent } from '../../shared/components/category-tag/category-tag';
-import { QuestionBlockComponent, QuestionSelection } from '../../shared/components/question-block/question-block';
-import { ResultBlockComponent } from '../../shared/components/result-block/result-block';
+import { SurveyHeaderComponent } from '../../shared/components/survey-header/survey-header';
+import { SurveyStatus } from '../../shared/components/status-badge/status-badge';
+import { QuestionSelection } from '../../shared/components/question-block/question-block';
+import { SurveyQuestionsPanelComponent } from './components/survey-questions-panel/survey-questions-panel';
+import { SurveyResultsPanelComponent } from './components/survey-results-panel/survey-results-panel';
+import { SurveyContentComponent } from './components/survey-content/survey-content';
 import type { SurveyWithDetails, Vote } from '../../core/models';
 
 /**
@@ -22,9 +25,10 @@ import type { SurveyWithDetails, Vote } from '../../core/models';
   standalone: true,
   imports: [
     BtnComponent,
-    CategoryTagComponent,
-    QuestionBlockComponent,
-    ResultBlockComponent,
+    SurveyHeaderComponent,
+    SurveyQuestionsPanelComponent,
+    SurveyResultsPanelComponent,
+    SurveyContentComponent,
   ],
   templateUrl: './survey-detail.html',
   styleUrl: './survey-detail.scss',
@@ -65,7 +69,7 @@ export class SurveyDetailComponent implements OnInit, OnDestroy {
   });
 
   /** Survey statistics. */
-  readonly statistics = computed(() => 
+  readonly statistics = computed(() =>
     this.calculatorService.calculateSurveyStatistics(this.votes())
   );
 
@@ -75,7 +79,7 @@ export class SurveyDetailComponent implements OnInit, OnDestroy {
     const user = this.authService.currentUser();
     if (!s || !user) return [];
 
-    return s.questions.map(q => 
+    return s.questions.map(q =>
       this.calculatorService.enhanceQuestion(q, this.votes(), user.id)
     );
   });
@@ -90,15 +94,16 @@ export class SurveyDetailComponent implements OnInit, OnDestroy {
   /** Whether there are any votes at all. */
   readonly hasAnyResults = computed(() => this.statistics().totalVotes > 0);
 
-  /** Formatted deadline string. */
-  readonly deadlineText = computed(() => {
+  /** Survey status for header. */
+  readonly surveyStatus = computed((): SurveyStatus => {
     const s = this.survey();
-    if (!s?.deadline) return null;
-    return s.deadline.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
+    if (!s) return 'draft';
+    return s.isActive ? 'published' : 'ended';
+  });
+
+  /** Content layout mode. */
+  readonly contentLayout = computed(() => {
+    return this.showResultsView() ? 'results-only' : 'split';
   });
 
   /** Collected user selections: questionId → optionIds[]. */

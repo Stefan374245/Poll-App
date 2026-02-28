@@ -1,153 +1,29 @@
 @use "styles/abstract/variables" as v;
 
-/* ========================
-   Survey Detail – two-column
-   ======================== */
 .detail {
   max-width: v.$content-max-width;
   margin: 0 auto;
   padding: v.$spacing-xl;
 
-  /* ---------- Meta header ---------- */
-  &__meta {
+  &__toggle {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: v.$spacing-lg;
-    flex-wrap: wrap;
-    gap: v.$spacing-sm;
+    justify-content: flex-end;
+    margin-bottom: v.$spacing-xl;
   }
 
-  &__meta-left {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-md;
-  }
-
-  &__deadline {
-    font-family: "Mulish", sans-serif;
-    font-size: 0.85rem;
-    color: v.$text-primary;
-    opacity: 0.6;
-  }
-
-  /* ---------- Title / description ---------- */
-  &__header {
-    margin-bottom: v.$spacing-2xl;
-  }
-
-  &__title {
-    font-family: "Nerko One", cursive;
-    font-size: 2rem;
-    margin-bottom: v.$spacing-xs;
-  }
-
-  &__desc {
-    font-family: "Mulish", sans-serif;
-    font-size: 1rem;
+  &__loading {
+    text-align: center;
+    padding: v.$spacing-3xl;
+    font-size: 1.125rem;
     color: v.$text-primary;
     opacity: 0.7;
-    line-height: 1.6;
-  }
-
-  /* ---------- Two-column body ---------- */
-  &__body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: v.$spacing-2xl;
-    align-items: start;
-  }
-
-  /* —— Left: questions —— */
-  &__questions {
-    display: flex;
-    flex-direction: column;
-    gap: v.$spacing-xl;
-  }
-
-  &__submit {
-    margin-top: v.$spacing-md;
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  /* —— Right: results —— */
-  &__results {
-    display: flex;
-    flex-direction: column;
-    gap: v.$spacing-lg;
-  }
-
-  &__results-header {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-sm;
-    flex-wrap: wrap;
-  }
-
-  &__results-title {
-    font-family: "Nerko One", cursive;
-    font-size: 1.5rem;
-    color: v.$text-primary;
-  }
-
-  &__results-live {
-    font-family: "Mulish", sans-serif;
-    font-weight: 800;
-    font-size: 0.75rem;
-    color: v.$primary-btn;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  &__results-symbols {
-    margin-left: auto;
-    display: flex;
-    gap: 6px;
-  }
-
-  &__symbol {
-    width: 28px;
-    height: 28px;
-  }
-
-  &__results-list {
-    display: flex;
-    flex-direction: column;
-    gap: v.$spacing-xl;
-  }
-
-  &__results-empty {
-    padding: v.$spacing-2xl;
-    text-align: center;
-    border: 2px dashed v.$dark-bg;
-    border-radius: v.$radius-md;
-
-    p {
-      font-family: "Mulish", sans-serif;
-      font-size: 0.95rem;
-      color: v.$text-primary;
-      opacity: 0.6;
-    }
-  }
-
-  &__results-empty-note {
-    margin-top: v.$spacing-sm;
-    font-weight: 700;
   }
 
   &__not-found {
     text-align: center;
     padding: v.$spacing-3xl;
+    font-size: 1.125rem;
+    color: v.$text-primary;
     opacity: 0.6;
-  }
-}
-
-/* ========================
-   Responsive: stack below 768 px
-   ======================== */
-@media (max-width: 768px) {
-  .detail__body {
-    grid-template-columns: 1fr;
   }
 }
