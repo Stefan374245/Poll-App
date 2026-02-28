@@ -1,0 +1,32 @@
+@use '../../../../../styles/abstract/variables' as *;
+
+.results-panel {
+  display: flex;
+  flex-direction: column;
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+
+  &__empty {
+    padding: $spacing-3xl $spacing-xl;
+    text-align: center;
+    background-color: $light-bg;
+    border-radius: $radius-lg;
+  }
+
+  &__empty-text {
+    font-size: 1rem;
+    color: $text-primary;
+    margin: 0 0 $spacing-md;
+  }
+
+  &__empty-note {
+    font-size: 0.875rem;
+    color: $text-primary;
+    opacity: 0.6;
+    margin: 0;
+  }
+}

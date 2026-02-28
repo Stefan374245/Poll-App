@@ -1,0 +1,19 @@
+@use '../../../../../styles/abstract/variables' as *;
+
+.questions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+
+  &__submit {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: $spacing-lg;
+  }
+}

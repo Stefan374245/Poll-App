@@ -1,0 +1,28 @@
+<div class="questions-panel">
+  <app-survey-meta
+    [title]="title()"
+    [description]="description()"
+  />
+
+  <div class="questions-panel__list">
+    @for (question of questions(); track question.id; let i = $index) {
+      <app-question-block
+        [question]="question"
+        [questionNumber]="i + 1"
+        [readonly]="hasVoted() || !isActive()"
+        (selectionChange)="onQuestionChange($event)"
+      />
+    }
+  </div>
+
+  @if (showSubmit()) {
+    <div class="questions-panel__submit">
+      <app-btn
+        variant="primary"
+        [label]="submitLabel()"
+        [disabled]="!canSubmit()"
+        (click)="onSubmitClick()"
+      />
+    </div>
+  }
+</div>

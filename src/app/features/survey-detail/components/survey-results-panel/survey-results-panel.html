@@ -1,0 +1,23 @@
+<div class="results-panel">
+  @if (showResults()) {
+    <app-results-header [isLive]="isLive()" />
+
+    @if (hasAnyVotes()) {
+      <div class="results-panel__list">
+        @for (question of questionsWithResults(); track question.id; let i = $index) {
+          <app-result-block
+            [question]="question"
+            [questionNumber]="i + 1"
+          />
+        }
+      </div>
+    } @else {
+      <div class="results-panel__empty">
+        <p class="results-panel__empty-text">
+          Results will be shown here after participants complete the survey.
+        </p>
+        <p class="results-panel__empty-note">There are no answers yet.</p>
+      </div>
+    }
+  }
+</div>
