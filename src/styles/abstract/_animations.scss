@@ -81,3 +81,15 @@
   // Hover state: trigger animation
   animation: slide-in-from-center $duration ease-out $delay forwards;
 }
+
+// ==========================================================================
+// Keyframes: Pulse Animation for LIVE indicators
+// ==========================================================================
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

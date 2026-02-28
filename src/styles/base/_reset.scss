@@ -36,7 +36,7 @@ h5,
 h6 {
   font-family: 'Nerko One', cursive;
   line-height: 1.2;
-  color: v.$primary;
+  color: v.$secondary;
 }
 
 a {
@@ -84,7 +84,7 @@ table {
   border-spacing: 0;
 }
 
-p  {
+p span  {
   color: v.$text-base;
   margin: 0;
 }
