@@ -1,0 +1,33 @@
+@use '../../../styles/abstract/variables' as *;
+@use '../../../styles/abstract/animations' as *;
+
+.results-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &__live {
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing-xs $spacing-md;
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-radius: $radius-md;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    &--active {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+@use '../../../styles/abstract/variables' as *;
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-lg;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color $transition-base;
+
+  &--published {
+    background-color: $primary-btn-light;
+    color: $text-primary;
+  }
+
+  &--draft {
+    background-color: #e2e8f0;
+    color: #475569;
+  }
+
+  &--ended {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+
+  &__text {
+    line-height: 1.2;
+  }
+}

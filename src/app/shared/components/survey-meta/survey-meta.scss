@@ -1,0 +1,21 @@
+@use '../../../styles/abstract/variables' as *;
+
+.survey-meta {
+  margin-bottom: $spacing-2xl;
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $primary-btn;
+    line-height: 1.2;
+    margin: 0 0 $spacing-md;
+  }
+
+  &__description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $text-primary;
+    margin: 0;
+    opacity: 0.85;
+  }
+}
