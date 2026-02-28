@@ -1,0 +1,14 @@
+<header class="survey-header">
+  <div class="survey-header__left">
+    <app-status-badge [status]="status()" />
+    @if (deadlineText()) {
+      <span class="survey-header__deadline">{{ deadlineText() }}</span>
+    }
+  </div>
+
+  <div class="survey-header__right">
+    @if (category()) {
+      <app-category-tag [label]="category()!" variant="light" />
+    }
+  </div>
+</header>

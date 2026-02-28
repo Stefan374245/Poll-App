@@ -1,0 +1,28 @@
+@use '../../../styles/abstract/variables' as *;
+
+.survey-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg 0;
+  margin-bottom: $spacing-xl;
+  border-bottom: 1px solid $dark-bg;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__deadline {
+    font-size: 0.875rem;
+    color: $text-primary;
+    opacity: 0.7;
+  }
+}
