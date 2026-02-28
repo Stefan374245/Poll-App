@@ -10,6 +10,11 @@ function generateId(): string {
 }
 
 /**
+ * @deprecated This service is deprecated. Use the following instead:
+ * - SurveyDataService for CRUD operations with Supabase
+ * - SurveyStateService for reactive state management
+ * - SurveyCalculatorService for calculations and transformations
+ * 
  * Service for managing survey CRUD operations.
  * Uses in-memory storage with Angular Signals.
  */

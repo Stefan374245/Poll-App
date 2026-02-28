@@ -11,7 +11,8 @@ import type {
   SurveyQuestionWithResults,
   SurveyOptionWithVotes,
   Vote,
-  DeadlineInfo
+  DeadlineInfo,
+  SurveyStatistics
 } from '../../models';
 import { URGENT_SURVEY_THRESHOLD_MS } from '../../constants/survey.constants';
 
@@ -19,6 +20,50 @@ import { URGENT_SURVEY_THRESHOLD_MS } from '../../constants/survey.constants';
   providedIn: 'root'
 })
 export class SurveyCalculatorService {
+
+  /**
+   * Calculates survey statistics from votes.
+   */
+  calculateSurveyStatistics(votes: Vote[]): SurveyStatistics {
+    const uniqueUsers = new Set(votes.map(v => v.userId));
+    const sortedVotes = [...votes].sort((a, b) =>
+      b.votedAt.getTime() - a.votedAt.getTime()
+    );
+
+    return {
+      totalParticipants: uniqueUsers.size,
+      totalVotes: votes.length,
+      lastVoteAt: sortedVotes[0]?.votedAt || null
+    };
+  }
+
+  /**
+   * Checks if user has voted on a specific survey.
+   */
+  hasUserVoted(votes: Vote[], surveyId: string, userId: string): boolean {
+    return votes.some(v =>
+      v.surveyId === surveyId && v.userId === userId
+    );
+  }
+
+  /**
+   * Calculates vote percentages for options in a question.
+   */
+  calculateOptionPercentages(
+    optionIds: string[],
+    votes: Vote[]
+  ): Map<string, number> {
+    const totalVotes = votes.length;
+    const percentages = new Map<string, number>();
+
+    optionIds.forEach(optionId => {
+      const voteCount = this.countOptionVotes(votes, optionId);
+      const percentage = this.calculatePercentage(voteCount, totalVotes);
+      percentages.set(optionId, percentage);
+    });
+
+    return percentages;
+  }
 
   /**
    * Calculates vote percentage for an option.
@@ -93,7 +138,7 @@ export class SurveyCalculatorService {
   /**
    * Checks if user voted for specific option.
    */
-  private hasUserVoted(userVotes: Vote[], optionId: string): boolean {
+  private hasUserVotedForOption(userVotes: Vote[], optionId: string): boolean {
     return userVotes.some(vote => vote.optionId === optionId);
   }
 
@@ -125,7 +170,7 @@ export class SurveyCalculatorService {
   ): SurveyOptionWithVotes {
     const voteCount = this.countOptionVotes(questionVotes, option.id);
     const percentage = this.calculatePercentage(voteCount, totalVotes);
-    const isUserChoice = this.hasUserVoted(userVotes, option.id);
+    const isUserChoice = this.hasUserVotedForOption(userVotes, option.id);
 
     return { ...option, voteCount, percentage, isUserChoice };
   }

@@ -12,7 +12,8 @@ import { SurveyStateService } from './survey-state.service';
 import type {
   Survey,
   SurveyWithDetails,
-  CreateSurveyPayload
+  CreateSurveyPayload,
+  Vote
 } from '../../models';
 import type { Database } from '../../models/database.types';
 
@@ -23,12 +24,13 @@ type OptionInsert = Database['public']['Tables']['options']['Insert'];
 type QuestionRow = Database['public']['Tables']['questions']['Row'];
 type OptionRow = Database['public']['Tables']['options']['Row'];
 type UserRow = Database['public']['Tables']['users']['Row'];
+type VoteInsert = Database['public']['Tables']['votes']['Insert'];
+type VoteRow = Database['public']['Tables']['votes']['Row'];
 
 // Types for joined query results
 interface SurveyWithJoins extends SurveyRow {
   creator: Partial<UserRow> | null;
   questions: Array<QuestionRow & { options: OptionRow[] }>;
-  statistics: Array<{ total_participants: number; total_votes: number; last_vote_at: string | null }>;
 }
 
 @Injectable({
@@ -78,9 +80,9 @@ export class SurveyDataService {
    */
   async createSurvey(payload: CreateSurveyPayload): Promise<Survey> {
     console.log('Creating survey with payload:', payload);
-    
+
     const surveyData: SurveyInsert = this.mapToInsertPayload(payload);
-    
+
     const { data, error } = await this.supabase.client
       .from('surveys')
       // Known Supabase typing issue - types are correct but not recognized by generic
@@ -116,7 +118,7 @@ export class SurveyDataService {
   ): Promise<void> {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
-      
+
       // Insert question
       const questionInsert: QuestionInsert = {
         survey_id: surveyId,
@@ -140,7 +142,7 @@ export class SurveyDataService {
 
       // Insert options
       const questionRow = questionData as QuestionRow;
-      
+
       if (q.options && q.options.length > 0) {
         const optionsData: OptionInsert[] = q.options.map((opt: string, idx: number) => ({
           question_id: questionRow.id,
@@ -199,6 +201,96 @@ export class SurveyDataService {
   }
 
   /**
+   * Submits a single vote for an option.
+   * Handles unique constraint and deadline validation.
+   */
+  async submitVote(
+    surveyId: string,
+    questionId: string,
+    optionId: string,
+    userId: string
+  ): Promise<Vote> {
+    // Check deadline
+    const survey = await this.getSurveyById(surveyId);
+    if (survey.deadline && new Date() > survey.deadline) {
+      throw new Error('Survey deadline has passed');
+    }
+
+    const voteData: VoteInsert = {
+      survey_id: surveyId,
+      question_id: questionId,
+      option_id: optionId,
+      user_id: userId
+    };
+
+    const { data, error } = await this.supabase.client
+      .from('votes')
+      // @ts-expect-error - Database types are properly typed but not inferred correctly by Supabase client
+      .insert(voteData)
+      .select()
+      .single();
+
+    if (error) {
+      // Handle unique constraint violation
+      if (error.code === '23505') {
+        throw new Error('You have already voted for this option');
+      }
+      throw this.createError(error);
+    }
+
+    const voteRow = data as VoteRow;
+    return this.mapToVote(voteRow);
+  }
+
+  /**
+   * Deletes a vote (allows user to change their vote).
+   */
+  async deleteVote(voteId: string): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('votes')
+      .delete()
+      .eq('id', voteId);
+
+    if (error) {
+      throw this.createError(error);
+    }
+  }
+
+  /**
+   * Gets all votes by a specific user.
+   */
+  async getVotesByUser(userId: string): Promise<Vote[]> {
+    const { data, error } = await this.supabase.client
+      .from('votes')
+      .select('*')
+      .eq('user_id', userId)
+      .order('voted_at', { ascending: false });
+
+    if (error) {
+      throw this.createError(error);
+    }
+
+    return (data as VoteRow[]).map(v => this.mapToVote(v));
+  }
+
+  /**
+   * Gets all votes for a specific survey.
+   */
+  async getVotesBySurvey(surveyId: string): Promise<Vote[]> {
+    const { data, error } = await this.supabase.client
+      .from('votes')
+      .select('*')
+      .eq('survey_id', surveyId)
+      .order('voted_at', { ascending: false });
+
+    if (error) {
+      throw this.createError(error);
+    }
+
+    return (data as VoteRow[]).map(v => this.mapToVote(v));
+  }
+
+  /**
    * Fetches surveys with full details (join).
    */
   private async fetchSurveysWithDetails(): Promise<SurveyWithDetails[]> {
@@ -221,8 +313,7 @@ export class SurveyDataService {
     return `
       *,
       creator:users!creator_id (id, display_name, avatar_url),
-      questions (*, options (*)),
-      statistics:survey_statistics (*)
+      questions (*, options (*))
     `;
   }
 
@@ -241,7 +332,7 @@ export class SurveyDataService {
       creatorId: data.creator_id,
       isActive: data.is_active,
       creator: this.mapCreator(data.creator),
-      statistics: this.mapStatistics(data.statistics),
+      statistics: null, // Statistics calculated from votes in calculator service
       userHasVoted: false
     };
   }
@@ -355,5 +446,19 @@ export class SurveyDataService {
     return error instanceof Error
       ? error.message
       : 'Failed to load surveys';
+  }
+
+  /**
+   * Maps database row to Vote interface.
+   */
+  private mapToVote(data: VoteRow): Vote {
+    return {
+      id: data.id,
+      surveyId: data.survey_id,
+      questionId: data.question_id,
+      optionId: data.option_id,
+      userId: data.user_id,
+      votedAt: new Date(data.voted_at)
+    };
   }
 }

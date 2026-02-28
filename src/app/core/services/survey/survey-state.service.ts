@@ -4,18 +4,22 @@
  * All functions follow max 14 lines convention.
  */
 
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, signal, inject } from '@angular/core';
 
-import type { SurveyWithDetails, SurveyFilter } from '../../models';
+import { AuthService } from '../auth.service';
+import type { SurveyWithDetails, SurveyFilter, Vote } from '../../models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SurveyStateService {
+  private readonly auth = inject(AuthService);
+
   private readonly _surveys = signal<SurveyWithDetails[]>([]);
   private readonly _loading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
   private readonly _filter = signal<SurveyFilter>('active');
+  private readonly _votes = signal<Vote[]>([]);
 
   /** Read-only surveys signal */
   readonly surveys = this._surveys.asReadonly();
@@ -28,6 +32,33 @@ export class SurveyStateService {
 
   /** Read-only filter signal */
   readonly filter = this._filter.asReadonly();
+
+  /** Read-only votes signal */
+  readonly votes = this._votes.asReadonly();
+
+  /** Computed: Votes by current user */
+  readonly votesByCurrentUser = computed(() => {
+    const user = this.auth.currentUser();
+    if (!user) return [];
+    return this._votes().filter(v => v.userId === user.id);
+  });
+
+  /** Computed: Vote counts per survey */
+  readonly surveyVoteCounts = computed(() => {
+    const voteCounts = new Map<string, number>();
+    this._votes().forEach(vote => {
+      const count = voteCounts.get(vote.surveyId) || 0;
+      voteCounts.set(vote.surveyId, count + 1);
+    });
+    return voteCounts;
+  });
+
+  /** Computed: Surveys created by current user */
+  readonly surveysByCurrentUser = computed(() => {
+    const user = this.auth.currentUser();
+    if (!user) return [];
+    return this._surveys().filter(s => s.creatorId === user.id);
+  });
 
   /** Computed: Active surveys only */
   readonly activeSurveys = computed(() =>
@@ -109,6 +140,37 @@ export class SurveyStateService {
    */
   clearError(): void {
     this._error.set(null);
+  }
+
+  /**
+   * Sets all votes in state.
+   */
+  setVotes(votes: Vote[]): void {
+    this._votes.set(votes);
+  }
+
+  /**
+   * Adds a single vote to state.
+   */
+  addVote(vote: Vote): void {
+    this._votes.update(votes => [...votes, vote]);
+  }
+
+  /**
+   * Removes a vote from state.
+   */
+  removeVote(voteId: string): void {
+    this._votes.update(votes => votes.filter(v => v.id !== voteId));
+  }
+
+  /**
+   * Updates votes for a specific survey.
+   */
+  updateSurveyVotes(surveyId: string, votes: Vote[]): void {
+    this._votes.update(allVotes => [
+      ...allVotes.filter(v => v.surveyId !== surveyId),
+      ...votes
+    ]);
   }
 
   /**
