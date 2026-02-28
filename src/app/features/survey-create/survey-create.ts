@@ -8,7 +8,9 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InputComponent, SelectOption } from '../../shared/components/input/input';
 import { BtnComponent } from '../../shared/components/btn/btn';
-import { SurveyService } from '../../core/services/survey.service';
+import { SurveyDataService } from '../../core/services/survey/survey-data.service';
+import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 import { CreateSurveyPayload } from '../../core/models';
 
 /** Single answer model. */
@@ -82,10 +84,10 @@ export class SurveyCreateComponent {
   /** Alphabet for answer labels. */
   readonly alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  constructor(
-    private readonly router: Router,
-    private readonly surveyService: SurveyService,
-  ) {}
+  private readonly router = inject(Router);
+  private readonly surveyDataService = inject(SurveyDataService);
+  private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   // ---------------------------------------------------------------------------
   // Question actions
@@ -176,8 +178,14 @@ export class SurveyCreateComponent {
   // Form actions
   // ---------------------------------------------------------------------------
 
-  /** Publishes the survey via SurveyService. */
-  publish(): void {
+  /** Publishes the survey via SurveyDataService. */
+  async publish(): Promise<void> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      this.toastService.error('You must be logged in to create a survey');
+      return;
+    }
+
     const payload: CreateSurveyPayload = {
       title: this.surveyName(),
       description: this.description(),
@@ -190,8 +198,14 @@ export class SurveyCreateComponent {
       deadline: this.endDate() ? new Date(this.endDate()) : null,
     };
 
-    this.surveyService.createSurvey(payload, 'current-user');
-    this.router.navigate(['/']);
+    try {
+      await this.surveyDataService.createSurvey(payload);
+      this.toastService.success('Survey created successfully!');
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Failed to create survey:', error);
+      this.toastService.error('Failed to create survey');
+    }
   }
 
   /** Cancels creation and navigates back. */

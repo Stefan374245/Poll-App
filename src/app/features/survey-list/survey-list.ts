@@ -1,6 +1,7 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SurveyService } from '../../core/services/survey.service';
+import { SurveyDataService } from '../../core/services/survey/survey-data.service';
+import { SurveyStateService } from '../../core/services/survey/survey-state.service';
 import { CategoryTagComponent } from '../../shared/components/category-tag/category-tag';
 import { CountdownBadgeComponent } from '../../shared/components/countdown-badge/countdown-badge';
 import { BtnComponent } from '../../shared/components/btn/btn';
@@ -16,23 +17,32 @@ import type { SurveyFilter } from '../../core/models';
   templateUrl: './survey-list.html',
   styleUrl: './survey-list.scss',
 })
-export class SurveyListComponent {
-  private readonly surveyService = inject(SurveyService);
+export class SurveyListComponent implements OnInit {
+  private readonly surveyDataService = inject(SurveyDataService);
+  private readonly surveyStateService = inject(SurveyStateService);
 
   /** Current filter: 'active' or 'past'. */
-  readonly filter = signal<SurveyFilter>('active');
+  readonly filter = this.surveyStateService.filter;
 
-  /** Urgent surveys (deadline < 3 days). */
-  readonly urgentSurveys = this.surveyService.urgentSurveys;
+  /** Urgent surveys (deadline < 24 hours). */
+  readonly urgentSurveys = this.surveyStateService.urgentSurveys;
 
   /** Filtered survey list. */
-  readonly surveys = computed(() =>
-    this.surveyService.getFilteredSurveys(this.filter())
-  );
+  readonly surveys = this.surveyStateService.filteredSurveys;
+
+  /** Loading state. */
+  readonly loading = this.surveyStateService.loading;
+
+  /** Error state. */
+  readonly error = this.surveyStateService.error;
+
+  async ngOnInit(): Promise<void> {
+    await this.surveyDataService.loadAllSurveys();
+  }
 
   /** Switches the active filter. */
   setFilter(value: SurveyFilter): void {
-    this.filter.set(value);
+    this.surveyStateService.setFilter(value);
   }
 
   /** Returns countdown label for a deadline. */

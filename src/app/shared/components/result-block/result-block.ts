@@ -4,7 +4,7 @@ import {
   input,
   computed,
 } from '@angular/core';
-import { SurveyQuestion } from '../../../core/models/survey.interface';
+import { SurveyQuestion, SurveyQuestionWithResults } from '../../../core/models/survey.interface';
 import { ResultBarComponent } from '../result-bar/result-bar';
 
 /**
@@ -25,7 +25,7 @@ import { ResultBarComponent } from '../result-bar/result-bar';
 })
 export class ResultBlockComponent {
   /** The question data (with vote counts). */
-  readonly question = input.required<SurveyQuestion>();
+  readonly question = input.required<SurveyQuestion | SurveyQuestionWithResults>();
 
   /** 1-based question number. */
   readonly questionNumber = input<number>(1);
@@ -34,9 +34,15 @@ export class ResultBlockComponent {
   readonly alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   /** Total votes across all options in this question. */
-  readonly totalVotes = computed(() =>
-    this.question().options.reduce((sum, o) => sum + o.voteCount, 0),
-  );
+  readonly totalVotes = computed(() => {
+    const q = this.question();
+    // If it's SurveyQuestionWithResults, use totalVotes property
+    if ('totalVotes' in q) {
+      return q.totalVotes;
+    }
+    // Otherwise, calculate from options
+    return q.options.reduce((sum, o) => sum + o.voteCount, 0);
+  });
 
   /** Calculate percentage for an option. */
   percent(voteCount: number): number {

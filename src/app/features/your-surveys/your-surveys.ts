@@ -1,5 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { SurveyService } from '../../core/services/survey.service';
+import { SurveyStateService } from '../../core/services/survey/survey-state.service';
+import { SurveyDataService } from '../../core/services/survey/survey-data.service';
 import { HighlightsCardComponent } from '../highlights_card/highlights-card';
 import { SurveyListComponent } from '../survey-list/survey-list';
 
@@ -16,8 +17,12 @@ import { SurveyListComponent } from '../survey-list/survey-list';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class YourSurveysComponent {
-  private readonly surveyService = inject(SurveyService);
+  private readonly surveyStateService = inject(SurveyStateService);
+  private readonly surveyDataService = inject(SurveyDataService);
 
   /** Surveys ending soon (urgent, sorted by deadline). */
-  readonly endingSoon = this.surveyService.urgentSurveys;
+  readonly endingSoon = this.surveyStateService.urgentSurveys;
+
+  /** Surveys created by the current user. */
+  readonly yourSurveys = this.surveyStateService.surveysByCurrentUser;
 }
