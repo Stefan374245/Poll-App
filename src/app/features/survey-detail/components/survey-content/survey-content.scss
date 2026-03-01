@@ -1,11 +1,22 @@
-@use '../../../../styles/abstract/variables' as *;
+@use '../../../../../styles/abstract/variables' as *;
 
 .survey-content {
   width: 100%;
 
+  &__questions {
+    padding: 40px;
+    background-color: $detail-bg;
+    border-top-right-radius: 160px;
+  }
+
+  &__results {
+    margin-top: 130px;
+  }
+
   &__body {
     display: grid;
     gap: $spacing-3xl;
+    display: flex;
   }
 
   // Split layout: 2 columns (60% / 40%)

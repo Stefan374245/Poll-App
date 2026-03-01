@@ -5,29 +5,14 @@
 } @else if (survey(); as s) {
   <article class="detail" aria-label="Survey detail">
 
-    <!-- Survey Header: Status, Deadline, Category -->
-    <app-survey-header
-      [status]="surveyStatus()"
-      [deadline]="s.deadline"
-      [category]="s.category"
-      [createdAt]="s.createdAt"
-    />
-
-    <!-- Toggle Results View Button -->
-    @if (canViewResults()) {
-      <div class="detail__toggle">
-        <app-btn
-          variant="secondary"
-          [label]="showResultsView() ? 'Back to Voting' : 'Show Results'"
-          (click)="toggleResultsView()"
-        />
-      </div>
-    }
-
-    <!-- Survey Content: Questions + Results -->
     <app-survey-content [layoutMode]="contentLayout()">
-      <!-- Questions Panel -->
       <div questions>
+        <app-survey-header
+          [status]="surveyStatus()"
+          [deadline]="s.deadline"
+          [category]="s.category"
+          [createdAt]="s.createdAt"
+        />
         <app-survey-questions-panel
           [title]="s.title"
           [description]="s.description"
@@ -50,7 +35,6 @@
         />
       </div>
     </app-survey-content>
-
   </article>
 } @else {
   <p class="detail__not-found">Survey not found.</p>

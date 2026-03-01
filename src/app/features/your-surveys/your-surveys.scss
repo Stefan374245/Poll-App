@@ -17,8 +17,8 @@
   }
 
   &__section-title {
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: 32px;
+    font-weight: 100;
     color: v.$text-base;
     margin: 0 0 v.$spacing-lg;
   }
@@ -26,17 +26,12 @@
   &__highlights {
     margin-bottom: v.$spacing-2xl;
     padding-bottom: v.$spacing-2xl;
-    border-bottom: 1px solid v.$dark-bg;
   }
 
   &__cards {
     display: flex;
     gap: v.$spacing-lg;
     overflow-x: auto;
-    padding-bottom: v.$spacing-sm;
 
-    // Hide scrollbar but keep scroll functionality
-    scrollbar-width: thin;
-    scrollbar-color: v.$dark-bg transparent;
   }
 }

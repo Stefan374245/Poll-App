@@ -3,7 +3,7 @@
 
 // ==========================================================================
 // Create new survey – page layout
-// ==========================================================================
+// =================================================!important=========================
 
 .create {
   @include m.flex-column(32px);
@@ -11,9 +11,6 @@
   margin: 0 auto;
   padding: v.$spacing-xl 54px;
 
-  // -----------------------------------------------------------------------
-  // Header row (title group + cancel button)
-  // -----------------------------------------------------------------------
   &__header {
     display: flex;
     justify-content: space-between;
@@ -52,12 +49,8 @@
     align-items: center;
     gap: 10px;
     padding: 8px 12px;
-    font-family: 'Mulish', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 21px;
     color: v.$text-base;
-    background: v.$secondary-btn-light;
+    background: v.$cancel-btn;
     border: none;
     border-radius: v.$radius-lg;
     cursor: pointer;

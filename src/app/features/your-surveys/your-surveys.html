@@ -1,7 +1,6 @@
 <section class="your-surveys" aria-label="Your surveys">
   <h2 class="your-surveys__title">Your surveys</h2>
 
-  <!-- Ending soon highlights -->
   @if (endingSoon().length > 0) {
     <div class="your-surveys__highlights">
       <h3 class="your-surveys__section-title">Ending soon surveys</h3>
@@ -10,7 +9,7 @@
           <app-highlights-card
             [surveyId]="survey.id"
             [title]="survey.title"
-            [category]="survey.description"
+            [category]="survey.category"
             [deadline]="survey.deadline!"
           />
         }
@@ -18,6 +17,5 @@
     </div>
   }
 
-  <!-- Full survey list with filters -->
   <app-survey-list />
 </section>

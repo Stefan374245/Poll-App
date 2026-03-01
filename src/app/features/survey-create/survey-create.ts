@@ -178,11 +178,46 @@ export class SurveyCreateComponent {
   // Form actions
   // ---------------------------------------------------------------------------
 
+  /** Validates survey data before publishing. */
+  private validateSurvey(): string | null {
+    if (!this.surveyName().trim()) {
+      return 'Survey name is required';
+    }
+    if (!this.category()) {
+      return 'Category is required';
+    }
+    const questions = this.questions();
+    if (questions.length === 0) {
+      return 'At least one question is required';
+    }
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.text.trim()) {
+        return `Question ${i + 1} text is required`;
+      }
+      if (q.answers.length < 2) {
+        return `Question ${i + 1} must have at least 2 answers`;
+      }
+      for (let j = 0; j < q.answers.length; j++) {
+        if (!q.answers[j].text.trim()) {
+          return `Question ${i + 1}, Answer ${this.alphabet[j]} is required`;
+        }
+      }
+    }
+    return null;
+  }
+
   /** Publishes the survey via SurveyDataService. */
   async publish(): Promise<void> {
     const user = this.authService.currentUser();
     if (!user) {
       this.toastService.error('You must be logged in to create a survey');
+      return;
+    }
+
+    const validationError = this.validateSurvey();
+    if (validationError) {
+      this.toastService.error(validationError);
       return;
     }
 
