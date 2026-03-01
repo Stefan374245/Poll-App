@@ -1,0 +1,24 @@
+@use '../../../styles/abstract/variables' as v;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: v.$primary;
+  transition: background-color 0.3s ease;
+
+  &.white-bg {
+    background: #ffffff;
+  }
+}
+
+.main-layout {
+  &__body {
+    display: flex;
+    flex: 1;
+  }
+
+  &__main {
+    flex: 1;
+  }
+}
