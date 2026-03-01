@@ -1,13 +1,33 @@
 @use 'styles/abstract/variables' as v;
 
 .app-header {
-  background: v.$primary;
-  color: #ffffff;
-  padding: 1.5rem 1.5rem;
+  display: flex;
+  align-items: center;
   height: 60px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__logo {
+    width: 120px;
+  }
+
+  &__button {
+    margin-left: auto;
+  }
+
+  // White variant for survey detail page
+  &--white {
+    background: white;
+    color: v.$text-primary;
+  }
 }
 
 nav {
@@ -16,15 +36,4 @@ nav {
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.logo {
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.25rem;
-  margin-right: 2rem;
-
-  strong {
-    color: #6c63ff;
-  }
 }

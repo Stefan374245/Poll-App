@@ -1,3 +1,15 @@
-<header class="app-header" role="banner">
-  <img src="logo/logo_orange.svg" alt="PollApp Logo" class="app-header__logo" />
+<header class="app-header" [class.app-header--white]="showWhiteHeader" role="banner">
+  <div class="app-header__container">
+    <div class="app-header__logo">
+      <img src="logo/logo_orange.svg" alt="PollApp Logo" />
+    </div>
+
+    <a
+      *ngIf="showCreateButton"
+      [routerLink]="routerLink"
+      class="btn btn--primary app-header__button"
+    >
+      <span>{{ buttonText }}</span>
+    </a>
+  </div>
 </header>

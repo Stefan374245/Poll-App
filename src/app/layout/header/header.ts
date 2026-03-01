@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services';
+import { RouteData } from '../../app.routes';
 
 /**
  * App header with navigation and user actions.
@@ -8,17 +11,61 @@ import { AuthService } from '../../core/services';
 @Component({
   selector: 'app-header',
   standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   readonly currentUser;
+  showCreateButton = false;
+  showWhiteHeader = false;
+  buttonText = 'Create Survey';
+  buttonRoute: string[] = ['/create'];
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
   ) {
     this.currentUser = this.authService.currentUser;
+  }
+
+  /**
+   * Returns the router link as array for type-safe navigation
+   */
+  get routerLink(): string[] {
+    return this.buttonRoute;
+  }
+
+  ngOnInit(): void {
+    // Check initial route
+    this.updateHeaderFromRoute();
+
+    // Update header on route changes
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateHeaderFromRoute();
+      });
+  }
+
+  /**
+   * Updates header configuration based on current route data
+   */
+  private updateHeaderFromRoute(): void {
+    const currentUrl = this.router.url;
+
+    // Show button only on survey detail pages
+    this.showCreateButton = currentUrl.startsWith('/survey/');
+
+    // Get route data for white header
+    let route = this.activatedRoute.firstChild;
+    while (route?.firstChild) {
+      route = route.firstChild;
+    }
+
+    const data = route?.snapshot.data as RouteData | undefined;
+    this.showWhiteHeader = data?.showWhiteHeader ?? false;
   }
 
   /** Logs out and navigates to login. */
