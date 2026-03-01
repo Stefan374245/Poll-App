@@ -1,8 +1,8 @@
-@use '../../../styles/abstract/variables' as *;
+@use '../../../../styles/abstract/variables' as *;
 
 .survey-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   padding: $spacing-lg 0;
   margin-bottom: $spacing-xl;
@@ -10,14 +10,22 @@
 
   &__left {
     display: flex;
-    align-items: center;
-    gap: $spacing-lg;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
   }
 
   &__right {
     display: flex;
     align-items: center;
     gap: $spacing-md;
+        padding: 0 1.5rem;
+  }
+
+  &__category-label {
+    font-size: 0.875rem;
+    color: $text-primary;
+    opacity: 0.7;
   }
 
   &__deadline {

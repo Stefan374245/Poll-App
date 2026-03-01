@@ -8,7 +8,8 @@
 
   <div class="survey-header__right">
     @if (category()) {
-      <app-category-tag [label]="category()!" variant="light" />
+      <span class="survey-header__category-label">Categorie:</span>
+      <app-category-tag [label]="category()!" variant="light" class />
     }
   </div>
 </header>

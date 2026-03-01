@@ -10,10 +10,11 @@
     font-weight: 400;
   }
 
-  // -------------------------------------------------------------------------
-  // Hint (multi-select)
-  // -------------------------------------------------------------------------
-  &__hint {
+  &__heading {
+    color: v.$text-primary;
+  }
+
+ &__hint {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -36,11 +37,6 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-  }
-
-  &__option {
-    margin: 0;
   }
 
   // -------------------------------------------------------------------------
@@ -105,12 +101,14 @@
     font-weight: 700;
     flex-shrink: 0;
     min-width: 22px;
-    color: v.$text-base;
+    color: v.$text-primary;
   }
 
   &__label {
     flex: 1;
     text-align: left;
+    color: v.$text-primary;
+     font-weight: 400;
   }
 
   // -------------------------------------------------------------------------

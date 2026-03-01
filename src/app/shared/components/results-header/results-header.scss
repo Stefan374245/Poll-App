@@ -1,11 +1,9 @@
-@use '../../../styles/abstract/variables' as *;
-@use '../../../styles/abstract/animations' as *;
+@use '../../../../styles/abstract/variables' as *;
+@use '../../../../styles/abstract/animations' as *;
 
 .results-header {
   display: flex;
   align-items: center;
-  gap: $spacing-lg;
-  margin-bottom: $spacing-xl;
 
   &__title {
     font-size: 1.75rem;
@@ -18,10 +16,9 @@
     display: inline-flex;
     align-items: center;
     padding: $spacing-xs $spacing-md;
-    background-color: #fee2e2;
-    color: #991b1b;
+    color: $text-secondary;
     border-radius: $radius-md;
-    font-size: 0.75rem;
+    font-size: 2rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
