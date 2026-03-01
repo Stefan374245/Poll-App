@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/poll-app/browser",
+  "outputDirectory": "dist/Poll-App/browser",
   "framework": "angular",
   "rewrites": [
     {
