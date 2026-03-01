@@ -29,14 +29,18 @@ body {
 }
 
 h1,
-h2,
+h2 {
+  font-family: 'Nerko One', cursive;
+  line-height: 1.2;
+  color: v.$text-secondary;
+}
+
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Nerko One', cursive;
-  line-height: 1.2;
-  color: v.$secondary;
+  font-weight: 700;
+  color: v.$text-primary;
 }
 
 a {
