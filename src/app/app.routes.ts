@@ -1,34 +1,57 @@
 import { Routes } from '@angular/router';
+import { MainLayoutComponent } from './layout/main-layout/main-layout';
+import { HomeComponent } from './features/home/home';
+import { SurveyDetailComponent } from './features/survey-detail/survey-detail';
+import { SurveyCreateComponent } from './features/survey-create/survey-create';
+import { LoginComponent } from './auth/login/login';
+import { SignupComponent } from './auth/signup/signup';
 
-/** Application routes with lazy loading for best performance. */
+/**
+ * Route data interface for header and body configuration
+ */
+export interface RouteData {
+  hideHeader?: boolean;
+  showWhiteHeader?: boolean;
+  bodyBgWhite?: boolean;
+}
+
+/**
+ * Application Routes with MainLayout Wrapper
+ * All routes wrapped in MainLayoutComponent for consistent body background control
+ */
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./features/home/home').then(m => m.HomeComponent),
-  },
-  {
-    path: 'create',
-    loadComponent: () =>
-      import('./features/survey-create/survey-create').then(m => m.SurveyCreateComponent),
-  },
-  {
-    path: 'survey/:id',
-    loadComponent: () =>
-      import('./features/survey-detail/survey-detail').then(m => m.SurveyDetailComponent),
-  },
-  {
-    path: 'login',
-    loadComponent: () =>
-      import('./auth/login/login').then(m => m.LoginComponent),
-  },
-  {
-    path: 'signup',
-    loadComponent: () =>
-      import('./auth/signup/signup').then(m => m.SignupComponent),
-  },
-  {
-    path: '**',
-    redirectTo: '',
+    component: MainLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: HomeComponent,
+      },
+      {
+        path: 'survey/:id',
+        component: SurveyDetailComponent,
+        data: { showWhiteHeader: true, bodyBgWhite: true } as RouteData,
+      },
+      {
+        path: 'create',
+        component: SurveyCreateComponent,
+        data: { hideHeader: true, bodyBgWhite: true } as RouteData,
+      },
+      {
+        path: 'login',
+        component: LoginComponent,
+        data: { hideHeader: true, bodyBgWhite: true } as RouteData,
+      },
+      {
+        path: 'signup',
+        component: SignupComponent,
+        data: { hideHeader: true, bodyBgWhite: true } as RouteData,
+      },
+      {
+        path: '**',
+        redirectTo: '',
+      },
+    ],
   },
 ];

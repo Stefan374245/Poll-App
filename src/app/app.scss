@@ -1,17 +1,5 @@
 @use '../styles/abstract/variables' as v;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.app-body {
-  display: flex;
-  flex: 1;
-}
-
-.app-main {
-  flex: 1;
-  background: v.$primary;
+  display: block;
 }
