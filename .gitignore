@@ -50,3 +50,6 @@ __screenshots__/
 Thumbs.db
 
 /supabase-schema.sql
+
+# Vercel
+.vercel
