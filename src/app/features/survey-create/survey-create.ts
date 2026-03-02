@@ -23,7 +23,6 @@ interface Answer {
 interface Question {
   id: number;
   text: string;
-  hint: string;
   allowMultiple: boolean;
   answers: Answer[];
 }
@@ -69,7 +68,6 @@ export class SurveyCreateComponent {
     {
       id: 1,
       text: '',
-      hint: '',
       allowMultiple: false,
       answers: [
         { id: 1, text: '' },
@@ -99,38 +97,6 @@ export class SurveyCreateComponent {
     );
   }
 
-  /** Updates hint text and auto-detects if multiple answers should be allowed. */
-  onHintTextChange(questionId: number, value: string): void {
-    const allowMultiple = this.detectMultipleChoice(value);
-    this.questions.update(qs =>
-      qs.map(q =>
-        q.id === questionId
-          ? { ...q, hint: value, allowMultiple }
-          : q
-      ),
-    );
-  }
-
-  /** Detects if hint text indicates multiple choice answers. */
-  private detectMultipleChoice(hint: string): boolean {
-    if (!hint.trim()) return false;
-
-    const multipleIndicators = [
-      'more than one',
-      'multiple',
-      'mehrere',
-      'können mehrere',
-      'select all',
-      'alle zutreffenden',
-      'all that apply',
-    ];
-
-    const lowerHint = hint.toLowerCase();
-    return multipleIndicators.some(indicator =>
-      lowerHint.includes(indicator)
-    );
-  }
-
   /** Toggles allow-multiple flag. */
   toggleMultiple(questionId: number): void {
     this.questions.update(qs =>
@@ -153,7 +119,6 @@ export class SurveyCreateComponent {
       {
         id,
         text: '',
-        hint: '',
         allowMultiple: false,
         answers: [
           { id: this.nextAnswerId++, text: '' },
@@ -264,7 +229,7 @@ export class SurveyCreateComponent {
       category: this.category(),
       questions: this.questions().map(q => ({
         text: q.text,
-        hint: q.hint || undefined,
+        hint: undefined,
         allowMultiple: q.allowMultiple,
         options: q.answers.map(a => a.text),
       })),

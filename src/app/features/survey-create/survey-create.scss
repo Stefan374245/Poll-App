@@ -148,40 +148,6 @@
     color: v.$text-base;
   }
 
-  &__hint-field {
-    @include m.flex-column(6px);
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  &__hint-label {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-family: 'Mulish', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 18px;
-    color: v.$text-base;
-  }
-
-  &__hint-info {
-    font-size: 11px;
-    font-weight: 400;
-    opacity: 0.7;
-    font-style: italic;
-  }
-
-  &__input--hint {
-    border-left: 3px solid v.$info;
-    background-color: rgba(#d1ecf1, 0.15);
-    font-style: italic;
-
-    &::placeholder {
-      color: rgba(v.$text-base, 0.5);
-    }
-  }
-
   &__input {
     width: 100%;
     height: 37px;
@@ -225,69 +191,42 @@
     color: v.$text-base;
   }
 
-  &__answer-type-indicator {
-    @include m.flex-row(8px);
+  &__multiple-checkbox {
+    display: flex;
     align-items: center;
-    padding: 6px 12px;
-    background: rgba(v.$card-bg, 0.1);
-    border-radius: v.$radius-md;
-    border: 1px solid transparent;
-    transition: border-color v.$transition-base;
-  }
-
-  &__indicator {
-    @include m.flex-row(6px);
-    align-items: center;
+    gap: 8px;
     font-family: 'Mulish', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 15px;
-
-    &--active {
-      color: v.$success-bg;
-
-      .create__indicator-icon {
-        width: 18px;
-        height: 18px;
-        color: v.$success;
-      }
-    }
-
-    &--inactive {
-      color: rgba(v.$text-base, 0.6);
-
-      .create__indicator-icon {
-        width: 18px;
-        height: 18px;
-        color: rgba(v.$text-base, 0.5);
-      }
-    }
-  }
-
-  &__indicator-icon {
-    flex-shrink: 0;
-  }
-
-  &__toggle-btn {
-    padding: 4px 12px;
-    font-family: 'Mulish', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 400;
     color: v.$text-base;
-    background: v.$primary-btn;
-    border: none;
-    border-radius: v.$radius-sm;
     cursor: pointer;
-    transition: all v.$transition-base;
+    transition: opacity v.$transition-fast;
 
     &:hover {
-      background: v.$primary-btn-light;
-      transform: scale(1.05);
+      opacity: 0.8;
     }
+  }
 
-    &:active {
-      transform: scale(0.98);
+  &__checkbox-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 18px;
+      height: 18px;
     }
+  }
+
+  &__checkbox-empty {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid v.$text-primary;
+    border-radius: 3px;
   }
 
   &__answer-row {
@@ -295,16 +234,6 @@
     align-items: center;
     gap: 4px;
     width: 100%;
-  }
-
-  &__answer-preview {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    accent-color: v.$primary-btn;
-    cursor: default;
   }
 
   &__answer-letter {
