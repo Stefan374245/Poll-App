@@ -87,9 +87,24 @@
                 <input
                   class="create__input"
                   type="text"
-                  [placeholder]="'Which data would work best for you?'"
+                  [placeholder]="'Which date would work best for you?'"
                   [value]="question.text"
                   (input)="onQuestionTextChange(question.id, $any($event.target).value)"
+                />
+              </div>
+
+              <!-- Hint Field -->
+              <div class="create__hint-field">
+                <label class="create__hint-label">
+                  Hint (Optional)
+                  <span class="create__hint-info">Typing "more than one" or "multiple" will auto-enable multiple answers</span>
+                </label>
+                <input
+                  class="create__input create__input--hint"
+                  type="text"
+                  placeholder="e.g., More than one answer is possible"
+                  [value]="question.hint"
+                  (input)="onHintTextChange(question.id, $any($event.target).value)"
                 />
               </div>
 
@@ -97,22 +112,54 @@
               <div class="create__answers">
                 <div class="create__answers-header">
                   <span class="create__answers-label">Answers</span>
-                  <label class="create__checkbox">
-                    <span class="create__checkbox-box">
-                      <input
-                        type="checkbox"
-                        [checked]="question.allowMultiple"
-                        (change)="toggleMultiple(question.id)"
-                      />
-                      <span class="create__checkbox-mark"></span>
-                    </span>
-                    <span class="create__checkbox-text">Allow multiple answers.</span>
-                  </label>
+                  <div class="create__answer-type-indicator">
+                    @if (question.allowMultiple) {
+                      <div class="create__indicator create__indicator--active">
+                        <svg class="create__indicator-icon" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                          <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                        <span>Multiple answers</span>
+                      </div>
+                    } @else {
+                      <div class="create__indicator create__indicator--inactive">
+                        <svg class="create__indicator-icon" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+                          <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                        </svg>
+                        <span>Single answer</span>
+                      </div>
+                    }
+                    <button
+                      class="create__toggle-btn"
+                      type="button"
+                      (click)="toggleMultiple(question.id)"
+                      [attr.aria-label]="'Toggle multiple choice for question ' + (qi + 1)"
+                    >
+                      Toggle
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Answer rows -->
                 @for (answer of question.answers; track answer.id; let ai = $index) {
                   <div class="create__answer-row">
+                    <!-- Preview radio/checkbox -->
+                    @if (question.allowMultiple) {
+                      <input
+                        type="checkbox"
+                        class="create__answer-preview"
+                        disabled
+                        aria-hidden="true"
+                      />
+                    } @else {
+                      <input
+                        type="radio"
+                        class="create__answer-preview"
+                        disabled
+                        aria-hidden="true"
+                      />
+                    }
                     <span class="create__answer-letter">{{ alphabet[ai] }}.</span>
                     <input
                       class="create__input"
@@ -162,7 +209,12 @@
 
     <!-- Publish button (bottom right) -->
     <div class="create__actions">
-      <app-btn variant="primary" label="Publish" (click)="publish()" />
+      <app-btn
+        variant="primary"
+        [label]="isPublishing() ? 'Publishing...' : 'Publish'"
+        [disabled]="isPublishing()"
+        (click)="publish()"
+      />
     </div>
   </div>
 </section>
