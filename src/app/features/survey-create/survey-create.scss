@@ -1,10 +1,6 @@
 @use 'styles/abstract/variables' as v;
 @use 'styles/abstract/mixin' as m;
 
-// ==========================================================================
-// Create new survey – page layout
-// =================================================!important=========================
-
 .create {
   @include m.flex-column(32px);
   max-width: 1052px;
@@ -65,15 +61,12 @@
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Form area
-  // -----------------------------------------------------------------------
   &__form {
     @include m.flex-column(0);
     align-items: center;
     padding: 40px 32px;
-    gap: 64px;
-    background: rgba(142, 112, 153, 0.16);
+    gap: 40px;
+    background: v.$primary;
     border-radius: 5px 80px 5px 5px;
     width: 100%;
   }
@@ -82,11 +75,12 @@
     @include m.flex-column(64px);
     width: 100%;
     max-width: 986px;
+    background-color: v.$primary-light!important;
+    padding: 40px 54px;
+    border-radius: 5px 100px 5px 5px;
   }
 
-  // -----------------------------------------------------------------------
-  // Top row: survey meta fields
-  // -----------------------------------------------------------------------
+
   &__row {
     display: flex;
     gap: 64px;
@@ -105,19 +99,16 @@
     @include m.flex-column(8px);
 
     &--left {
-      flex: 1 1 470px;
+      flex: 1 1 0;
       min-width: 0;
     }
 
     &--right {
-      flex: 1 1 452px;
+      flex: 1 1 0;
       min-width: 0;
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Questions section
-  // -----------------------------------------------------------------------
   &__questions {
     @include m.flex-column(0);
     gap: 48px;
@@ -157,9 +148,40 @@
     color: v.$text-base;
   }
 
-  // -----------------------------------------------------------------------
-  // Native input (used inline for question & answer fields)
-  // -----------------------------------------------------------------------
+  &__hint-field {
+    @include m.flex-column(6px);
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  &__hint-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    color: v.$text-base;
+  }
+
+  &__hint-info {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  &__input--hint {
+    border-left: 3px solid v.$info;
+    background-color: rgba(#d1ecf1, 0.15);
+    font-style: italic;
+
+    &::placeholder {
+      color: rgba(v.$text-base, 0.5);
+    }
+  }
+
   &__input {
     width: 100%;
     height: 37px;
@@ -183,10 +205,7 @@
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Answers
-  // -----------------------------------------------------------------------
-  &__answers {
+ &__answers {
     @include m.flex-column(16px);
     width: 100%;
   }
@@ -206,61 +225,86 @@
     color: v.$text-base;
   }
 
-  // Custom checkbox
-  &__checkbox {
-    display: inline-flex;
+  &__answer-type-indicator {
+    @include m.flex-row(8px);
     align-items: center;
-    gap: 4px;
-    cursor: pointer;
+    padding: 6px 12px;
+    background: rgba(v.$card-bg, 0.1);
+    border-radius: v.$radius-md;
+    border: 1px solid transparent;
+    transition: border-color v.$transition-base;
   }
 
-  &__checkbox-box {
-    position: relative;
-    display: inline-flex;
+  &__indicator {
+    @include m.flex-row(6px);
     align-items: center;
-    justify-content: center;
-    width: 21px;
-    height: 21px;
-    padding: 3px;
-
-    input[type='checkbox'] {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-  }
-
-  &__checkbox-mark {
-    display: block;
-    width: 15px;
-    height: 15px;
-    border: 1.5px solid #ffffff;
-    border-radius: 3px;
-    transition:
-      background v.$transition-fast,
-      border-color v.$transition-fast;
-
-    input:checked + & {
-      background: v.$primary-btn;
-      border-color: v.$primary-btn;
-    }
-  }
-
-  &__checkbox-text {
     font-family: 'Mulish', sans-serif;
-    font-weight: 400;
     font-size: 12px;
+    font-weight: 600;
     line-height: 15px;
-    color: #ffffff;
+
+    &--active {
+      color: v.$success-bg;
+
+      .create__indicator-icon {
+        width: 18px;
+        height: 18px;
+        color: v.$success;
+      }
+    }
+
+    &--inactive {
+      color: rgba(v.$text-base, 0.6);
+
+      .create__indicator-icon {
+        width: 18px;
+        height: 18px;
+        color: rgba(v.$text-base, 0.5);
+      }
+    }
   }
 
-  // Answer row (letter + input + delete)
+  &__indicator-icon {
+    flex-shrink: 0;
+  }
+
+  &__toggle-btn {
+    padding: 4px 12px;
+    font-family: 'Mulish', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: v.$text-base;
+    background: v.$primary-btn;
+    border: none;
+    border-radius: v.$radius-sm;
+    cursor: pointer;
+    transition: all v.$transition-base;
+
+    &:hover {
+      background: v.$primary-btn-light;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
   &__answer-row {
     display: flex;
     align-items: center;
     gap: 4px;
     width: 100%;
+  }
+
+  &__answer-preview {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    accent-color: v.$primary-btn;
+    cursor: default;
   }
 
   &__answer-letter {
@@ -273,10 +317,7 @@
     color: v.$text-base;
   }
 
-  // -----------------------------------------------------------------------
-  // Add answer link button
-  // -----------------------------------------------------------------------
-  &__add-answer {
+ &__add-answer {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -313,10 +354,7 @@
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Small icon buttons (delete)
-  // -----------------------------------------------------------------------
-  &__icon-btn {
+ &__icon-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -341,9 +379,6 @@
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Bottom actions row
-  // -----------------------------------------------------------------------
   &__actions {
     display: flex;
     justify-content: flex-end;

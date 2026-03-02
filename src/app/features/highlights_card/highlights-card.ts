@@ -3,10 +3,6 @@ import { RouterLink } from '@angular/router';
 import { CategoryTagComponent } from '../../shared/components/category-tag/category-tag';
 import { CountdownBadgeComponent } from '../../shared/components/countdown-badge/countdown-badge';
 
-/**
- * Highlight card for "Ending soon" surveys.
- * Light purple background with category tag, title, and countdown badge.
- */
 @Component({
   selector: 'app-highlights-card',
   standalone: true,
@@ -16,30 +12,28 @@ import { CountdownBadgeComponent } from '../../shared/components/countdown-badge
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HighlightsCardComponent {
-  /** Survey ID for routing. */
+
   readonly surveyId = input.required<string>();
-
-  /** Survey title. */
   readonly title = input.required<string>();
-
-  /** Category label. */
   readonly category = input<string>('');
-
-  /** Deadline date for computing remaining time. */
   readonly deadline = input.required<Date>();
 
-  /** Computed countdown label (e.g., "Ends in 1 Day"). */
   readonly countdownLabel = computed(() => {
     return this.formatCountdown(this.deadline());
   });
 
-  /** Whether the deadline is urgent (< 2 days). */
   readonly isUrgent = computed(() => {
     const diff = this.deadline().getTime() - Date.now();
     const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
     return diff < TWO_DAYS_MS;
   });
 
+  /**
+   * Formats the countdown label based on the deadline.
+   * @param deadline The survey deadline date.
+   * @returns The formatted countdown label.
+   * @remarks This is a helper function to keep the template clean. It calculates the time difference and returns a user-friendly string.
+   */
   private formatCountdown(deadline: Date): string {
     const diffMs = deadline.getTime() - Date.now();
     if (diffMs <= 0) return 'Ended';

@@ -19,12 +19,10 @@
     display: flex;
   }
 
-  // Split layout: 2 columns (60% / 40%)
   &--split &__body {
     grid-template-columns: 1.5fr 1fr;
   }
 
-  // Results-only layout: single column
   &--results-only &__body {
     grid-template-columns: 1fr;
   }
@@ -33,7 +31,6 @@
     display: none;
   }
 
-  // Responsive: stack on mobile
   @media (max-width: $breakpoint-md) {
     &--split &__body {
       grid-template-columns: 1fr;

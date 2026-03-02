@@ -1,4 +1,3 @@
-// Barrel export for shared components
 export * from './btn/btn';
 export * from './category-tag/category-tag';
 export * from './countdown-badge/countdown-badge';
@@ -12,3 +11,4 @@ export * from './status-badge/status-badge';
 export * from './survey-header/survey-header';
 export * from './survey-meta/survey-meta';
 export * from './toast/toast';
+export * from './user-menu/user-menu';

@@ -6,7 +6,6 @@
   gap: 10px;
   width: 100%;
 
-  // Letter label (A, B, C…)
   &__letter {
     flex-shrink: 0;
     width: 16px;
@@ -16,7 +15,6 @@
     color: v.$text-primary;
   }
 
-  // Track background
   &__track {
     flex: 1;
     height: 14px;
@@ -25,7 +23,6 @@
     overflow: hidden;
   }
 
-  // Fill bar
   &__fill {
     height: 100%;
     background: v.$primary-btn;
@@ -38,7 +35,6 @@
     }
   }
 
-  // Percentage text
   &__pct {
     flex-shrink: 0;
     width: 36px;

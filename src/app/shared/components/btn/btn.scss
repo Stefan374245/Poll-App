@@ -1,6 +1,3 @@
-// Component-level styles — host receives global `.btn` classes from _btn.scss
-// This file handles only inner layout concerns.
-
 :host {
   display: inline-flex;
 }

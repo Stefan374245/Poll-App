@@ -4,7 +4,7 @@
 .hero {
   background-color: v.$primary;
   color: v.$text-secondary;
-  padding: 4rem v.$spacing-2xl;
+  padding: 4rem 4rem;
 
   &__content {
     max-width: v.$max-width;
@@ -19,7 +19,7 @@
     max-width: 560px;
     display: flex;
     flex-direction: column;
-    gap: v.$spacing-lg;
+    gap: 2rem;
   }
 
   &__title {
@@ -39,9 +39,6 @@
     margin: 0;
   }
 
-  // -----------------------------------------------------------------------
-  // Illustration (right side)
-  // -----------------------------------------------------------------------
   &__visual {
     flex: 0 0 auto;
     position: relative;
@@ -80,28 +77,21 @@
     z-index: 10;
   }
 
-  // -----------------------------------------------------------------------
-  // Animated SVG Icons - Base Styles
-  // All icons start in the center (on note3) and slide to positions
-  // -----------------------------------------------------------------------
   &__question,
   &__typing,
   &__check,
   &__star {
     width: auto;
     height: 70px;
-    // Initial state: in center of note3, hidden, scaled down
     opacity: 0;
     transform: translate(0, 0) scale(0);
     transition: opacity v.$transition-slow, transform v.$transition-slow;
-    // Start from center of visual area
     top: 50%;
     left: 50%;
-    margin-top: -35px; // Half of height for centering
+    margin-top: -35px;
     margin-left: -35px;
   }
 
-  // Question mark: top right
   &__question {
     z-index: 10;
     height: 75px;
@@ -111,39 +101,34 @@
     --slide-y: -136px;
   }
 
-  // Typing bubble: left, mid
   &__typing {
     z-index: 9;
     height: 60px;
     margin-top: -30px;
-    margin-left: -45px; // Wider SVG
-    --slide-x: 56px;
-    --slide-y: 64px;
+    margin-left: -45px;
+    --slide-x: 40px;
+    --slide-y: -180px;
   }
 
-  // Check mark: right, middle
   &__check {
     z-index: 8;
     height: 70px;
     margin-top: -35px;
     margin-left: -35px;
-    --slide-x: 280px;
-    --slide-y: 164px;
+    --slide-x: 260px;
+    --slide-y: -88px;
   }
 
-  // Star: bottom left
   &__star {
     z-index: 7;
     height: 65px;
     margin-top: -32.5px;
     margin-left: -32.5px;
-    --slide-x: -80px;
+    --slide-x: -88px;
     --slide-y: 100px;
   }
 
-  // -----------------------------------------------------------------------
-  // Hover Effect: Staggered Slide-out Animation from Center
-  // -----------------------------------------------------------------------
+
   &__visual:hover {
     .hero__question {
       @include a.slide-from-center(0s, 0.5s);
@@ -162,9 +147,6 @@
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Responsive
-  // -----------------------------------------------------------------------
   @media (max-width: v.$breakpoint-md) {
     &__content {
       flex-direction: column;
@@ -184,7 +166,6 @@
       width: 120px;
     }
 
-    // Scale down animated icons on mobile
     &__question,
     &__typing,
     &__check,

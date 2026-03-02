@@ -77,10 +77,8 @@ export class InputComponent implements ControlValueAccessor {
   /** Internal value signal. */
   readonly value = signal('');
 
-  /** Internal disabled state for CVA. */
   readonly isDisabled = signal(false);
 
-  // CVA callbacks
   private onChange: (val: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -101,7 +99,6 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  // -- ControlValueAccessor --
   writeValue(val: string): void {
     this.value.set(val ?? '');
   }

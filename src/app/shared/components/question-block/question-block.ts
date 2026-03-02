@@ -62,14 +62,12 @@ export class QuestionBlockComponent {
       const next = new Set(prev);
 
       if (q.allowMultiple) {
-        // multi-select: toggle
         if (next.has(optionId)) {
           next.delete(optionId);
         } else {
           next.add(optionId);
         }
       } else {
-        // single-select: replace
         next.clear();
         next.add(optionId);
       }

@@ -3,8 +3,9 @@
 .your-surveys {
   max-width: v.$max-width;
   margin: 0 auto;
-  padding: v.$spacing-2xl;
+  padding: 1rem 8rem;
   background-color: v.$primary;
+
 
   &__title {
     font-family: 'Nerko One', cursive;

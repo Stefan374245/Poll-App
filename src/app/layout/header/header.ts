@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services';
 import { RouteData } from '../../app.routes';
+import { UserMenuComponent } from '../../shared/components/user-menu/user-menu';
 
 /**
  * App header with navigation and user actions.
@@ -11,7 +12,7 @@ import { RouteData } from '../../app.routes';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UserMenuComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -23,7 +24,7 @@ export class HeaderComponent implements OnInit {
   buttonRoute: string[] = ['/create'];
 
   constructor(
-    private readonly authService: AuthService,
+    readonly authService: AuthService,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
   ) {
@@ -38,10 +39,8 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check initial route
     this.updateHeaderFromRoute();
 
-    // Update header on route changes
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -55,10 +54,8 @@ export class HeaderComponent implements OnInit {
   private updateHeaderFromRoute(): void {
     const currentUrl = this.router.url;
 
-    // Show button only on survey detail pages
     this.showCreateButton = currentUrl.startsWith('/survey/');
 
-    // Get route data for white header
     let route = this.activatedRoute.firstChild;
     while (route?.firstChild) {
       route = route.firstChild;
@@ -66,11 +63,5 @@ export class HeaderComponent implements OnInit {
 
     const data = route?.snapshot.data as RouteData | undefined;
     this.showWhiteHeader = data?.showWhiteHeader ?? false;
-  }
-
-  /** Logs out and navigates to login. */
-  onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

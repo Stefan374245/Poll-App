@@ -36,11 +36,9 @@ export class ResultBlockComponent {
   /** Total votes across all options in this question. */
   readonly totalVotes = computed(() => {
     const q = this.question();
-    // If it's SurveyQuestionWithResults, use totalVotes property
     if ('totalVotes' in q) {
       return q.totalVotes;
     }
-    // Otherwise, calculate from options
     return q.options.reduce((sum, o) => sum + o.voteCount, 0);
   });
 

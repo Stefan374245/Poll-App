@@ -5,6 +5,7 @@
   align-items: center;
   height: 60px;
   transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 3rem 4rem;
 
   &__container {
     display: flex;
@@ -12,18 +13,31 @@
     justify-content: space-between;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
   }
 
   &__logo {
     width: 120px;
   }
 
-  &__button {
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
     margin-left: auto;
   }
 
-  // White variant for survey detail page
+  &__login-link {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: v.$primary-btn;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
   &--white {
     background: white;
     color: v.$text-primary;

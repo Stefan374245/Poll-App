@@ -27,10 +27,8 @@ export class MainLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check initial route
     this.updateLayoutFromRoute();
 
-    // Update on route changes
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {

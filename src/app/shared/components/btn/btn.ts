@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   input,
+  output,
 } from '@angular/core';
 
 /** Supported button visual variants. */
@@ -30,7 +31,7 @@ export type BtnStatus = 'published' | 'draft';
  *
  * @example
  * ```html
- * <app-btn variant="primary" icon="add" label="New survey" />
+ * <app-btn variant="primary" icon="add" label="New survey" (click)="onClick()" />
  * <app-btn variant="filter" label="Past survey" [active]="true" />
  * <app-btn variant="status" statusType="published" label="Published" />
  * <app-btn variant="icon" icon="delete" ariaLabel="Delete survey" />
@@ -69,6 +70,9 @@ export class BtnComponent {
   /** Accessible label for icon-only buttons. */
   readonly ariaLabel = input<string>('');
 
+  /** Emits when button is clicked. */
+  readonly click = output<void>();
+
   /** Computed CSS class list bound to host. */
   readonly hostClasses = computed(() => {
     const classes = ['btn', `btn--${this.variant()}`];
@@ -85,4 +89,11 @@ export class BtnComponent {
 
     return classes.join(' ');
   });
+
+  /** Handles button click. */
+  onClick(): void {
+    if (!this.disabled()) {
+      this.click.emit();
+    }
+  }
 }

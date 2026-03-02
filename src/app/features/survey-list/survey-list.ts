@@ -21,31 +21,31 @@ export class SurveyListComponent implements OnInit {
   private readonly surveyDataService = inject(SurveyDataService);
   private readonly surveyStateService = inject(SurveyStateService);
 
-  /** Current filter: 'active' or 'past'. */
   readonly filter = this.surveyStateService.filter;
 
-  /** Urgent surveys (deadline < 24 hours). */
   readonly urgentSurveys = this.surveyStateService.urgentSurveys;
 
-  /** Filtered survey list. */
-  readonly surveys = this.surveyStateService.filteredSurveys;
+  readonly surveys = computed(() => {
+    const items = this.surveyStateService.filteredSurveys();
+    return [...items].sort((a, b) => {
+      const deadlineA = a.deadline?.getTime() ?? Infinity;
+      const deadlineB = b.deadline?.getTime() ?? Infinity;
+      return deadlineA - deadlineB;
+    });
+  });
 
-  /** Loading state. */
   readonly loading = this.surveyStateService.loading;
 
-  /** Error state. */
   readonly error = this.surveyStateService.error;
 
   async ngOnInit(): Promise<void> {
     await this.surveyDataService.loadAllSurveys();
   }
 
-  /** Switches the active filter. */
   setFilter(value: SurveyFilter): void {
     this.surveyStateService.setFilter(value);
   }
 
-  /** Returns countdown label for a deadline. */
   getCountdown(deadline: Date | null): string {
     if (!deadline) return '';
     const diffMs = deadline.getTime() - Date.now();
