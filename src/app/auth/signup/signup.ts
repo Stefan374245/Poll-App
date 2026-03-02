@@ -1,25 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services';
-import { ToastService } from '../../core/services';
+import { CommonModule } from '@angular/common';
+import { AuthService, ToastService } from '../../core/services';
+import { SpinnerComponent } from '../../shared/components';
 
 /**
- * Signup page component.
- * Creates a new user account.
+ * Signup page component - redirects to login (Quick Join).
+ * Same as login - only requires display name.
  */
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
 })
 export class SignupComponent {
   displayName = '';
-  email = '';
-  password = '';
-  isLoading = false;
+  isLoading = signal<boolean>(false);
 
   constructor(
     private readonly authService: AuthService,
@@ -27,33 +26,25 @@ export class SignupComponent {
     private readonly router: Router,
   ) {}
 
-  /** Handles signup form submission. */
-  async onSignup(): Promise<void> {
-    if (!this.displayName || !this.email || !this.password) {
-      this.toastService.error('Please fill in all fields');
+  /** Handles quick signup with name only */
+  async onQuickSignup(): Promise<void> {
+    if (!this.displayName || this.displayName.trim().length < 2) {
+      this.toastService.error('Please enter a name (min. 2 characters)');
       return;
     }
 
-    if (this.password.length < 6) {
-      this.toastService.error('Password must be at least 6 characters');
-      return;
-    }
-
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     try {
-      console.log('Attempting signup...', { email: this.email, displayName: this.displayName });
-      
-      await this.authService.signup(this.displayName, this.email, this.password);
-      
-      console.log('Signup successful, redirecting...');
-      this.toastService.success('Account created successfully');
+      console.log('🎭 Quick signup:', this.displayName);
+      await this.authService.quickLogin(this.displayName.trim());
+      this.toastService.success(`Welcome, ${this.displayName}! 🎉`);
       this.router.navigate(['/']);
     } catch (error: any) {
-      console.error('Signup error:', error);
-      this.toastService.error(error.message || 'An error occurred during signup. Please try again.');
+      console.error('❌ Signup error:', error);
+      this.toastService.error(error.message || 'Failed to create account. Please try again.');
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 }
