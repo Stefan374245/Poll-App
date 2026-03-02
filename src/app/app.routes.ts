@@ -4,7 +4,6 @@ import { HomeComponent } from './features/home/home';
 import { SurveyDetailComponent } from './features/survey-detail/survey-detail';
 import { SurveyCreateComponent } from './features/survey-create/survey-create';
 import { LoginComponent } from './auth/login/login';
-import { SignupComponent } from './auth/signup/signup';
 
 /**
  * Route data interface for header and body configuration
@@ -41,11 +40,6 @@ export const routes: Routes = [
       {
         path: 'login',
         component: LoginComponent,
-        data: { hideHeader: true, bodyBgWhite: true } as RouteData,
-      },
-      {
-        path: 'signup',
-        component: SignupComponent,
         data: { hideHeader: true, bodyBgWhite: true } as RouteData,
       },
       {
