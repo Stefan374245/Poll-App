@@ -23,6 +23,7 @@ interface Answer {
 interface Question {
   id: number;
   text: string;
+  hint: string;
   allowMultiple: boolean;
   answers: Answer[];
 }
@@ -67,8 +68,8 @@ export class SurveyCreateComponent {
   readonly questions = signal<Question[]>([
     {
       id: 1,
-
       text: '',
+      hint: '',
       allowMultiple: false,
       answers: [
         { id: 1, text: '' },
@@ -84,19 +85,49 @@ export class SurveyCreateComponent {
   /** Alphabet for answer labels. */
   readonly alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+  /** Publishing state to prevent double submit. */
+  readonly isPublishing = signal(false);
+
   private readonly router = inject(Router);
   private readonly surveyDataService = inject(SurveyDataService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
 
-  // ---------------------------------------------------------------------------
-  // Question actions
-  // ---------------------------------------------------------------------------
-
-  /** Updates question text. */
   onQuestionTextChange(questionId: number, value: string): void {
     this.questions.update(qs =>
       qs.map(q => (q.id === questionId ? { ...q, text: value } : q)),
+    );
+  }
+
+  /** Updates hint text and auto-detects if multiple answers should be allowed. */
+  onHintTextChange(questionId: number, value: string): void {
+    const allowMultiple = this.detectMultipleChoice(value);
+    this.questions.update(qs =>
+      qs.map(q =>
+        q.id === questionId
+          ? { ...q, hint: value, allowMultiple }
+          : q
+      ),
+    );
+  }
+
+  /** Detects if hint text indicates multiple choice answers. */
+  private detectMultipleChoice(hint: string): boolean {
+    if (!hint.trim()) return false;
+
+    const multipleIndicators = [
+      'more than one',
+      'multiple',
+      'mehrere',
+      'können mehrere',
+      'select all',
+      'alle zutreffenden',
+      'all that apply',
+    ];
+
+    const lowerHint = hint.toLowerCase();
+    return multipleIndicators.some(indicator =>
+      lowerHint.includes(indicator)
     );
   }
 
@@ -122,6 +153,7 @@ export class SurveyCreateComponent {
       {
         id,
         text: '',
+        hint: '',
         allowMultiple: false,
         answers: [
           { id: this.nextAnswerId++, text: '' },
@@ -131,11 +163,6 @@ export class SurveyCreateComponent {
     ]);
   }
 
-  // ---------------------------------------------------------------------------
-  // Answer actions
-  // ---------------------------------------------------------------------------
-
-  /** Updates answer text. */
   onAnswerTextChange(questionId: number, answerId: number, value: string): void {
     this.questions.update(qs =>
       qs.map(q =>
@@ -174,11 +201,6 @@ export class SurveyCreateComponent {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Form actions
-  // ---------------------------------------------------------------------------
-
-  /** Validates survey data before publishing. */
   private validateSurvey(): string | null {
     if (!this.surveyName().trim()) {
       return 'Survey name is required';
@@ -207,19 +229,34 @@ export class SurveyCreateComponent {
     return null;
   }
 
-  /** Publishes the survey via SurveyDataService. */
   async publish(): Promise<void> {
-    const user = this.authService.currentUser();
-    if (!user) {
-      this.toastService.error('You must be logged in to create a survey');
+    if (this.isPublishing()) {
+      console.log('⏸️ Already publishing, ignoring click');
       return;
     }
 
-    const validationError = this.validateSurvey();
-    if (validationError) {
-      this.toastService.error(validationError);
+    console.log('🚀 Publish clicked');
+    this.isPublishing.set(true);
+
+    const user = this.authService.currentUser();
+    if (!user) {
+      console.error('❌ No user logged in');
+      this.toastService.error('You must be logged in to create a survey');
+      this.isPublishing.set(false);
       return;
     }
+
+    console.log('✅ User logged in:', user.displayName);
+
+    const validationError = this.validateSurvey();
+    if (validationError) {
+      console.error('❌ Validation error:', validationError);
+      this.toastService.error(validationError);
+      this.isPublishing.set(false);
+      return;
+    }
+
+    console.log('✅ Validation passed');
 
     const payload: CreateSurveyPayload = {
       title: this.surveyName(),
@@ -227,19 +264,26 @@ export class SurveyCreateComponent {
       category: this.category(),
       questions: this.questions().map(q => ({
         text: q.text,
+        hint: q.hint || undefined,
         allowMultiple: q.allowMultiple,
         options: q.answers.map(a => a.text),
       })),
       deadline: this.endDate() ? new Date(this.endDate()) : null,
     };
 
+    console.log('📝 Payload:', payload);
+
     try {
+      console.log('⏳ Creating survey...');
       await this.surveyDataService.createSurvey(payload);
+      console.log('✅ Survey created successfully');
       this.toastService.success('Survey created successfully!');
       this.router.navigate(['/']);
     } catch (error) {
-      console.error('Failed to create survey:', error);
-      this.toastService.error('Failed to create survey');
+      console.error('❌ Failed to create survey:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create survey';
+      this.toastService.error(errorMessage);
+      this.isPublishing.set(false);
     }
   }
 
