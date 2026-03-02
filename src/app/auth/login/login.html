@@ -1,44 +1,38 @@
-<section class="auth-page" aria-label="Login">
+<section class="auth-page" aria-label="Quick Login">
   <article class="auth-card">
-    <h1>Login</h1>
-    <form (ngSubmit)="onLogin()" #loginForm="ngForm" novalidate>
+    <h1>Join PollApp</h1>
+    <p class="auth-subtitle">Enter your name to get started ✨</p>
+
+    <form (ngSubmit)="onQuickLogin()" #loginForm="ngForm" novalidate>
+      <!-- Name Input -->
       <div class="form-group">
-        <label for="email">
-          E-Mail <span class="required" aria-label="required">*</span>
+        <label for="displayName">
+          Your Name <span class="required" aria-label="required">*</span>
         </label>
         <input
-          id="email"
-          type="email"
-          name="email"
-          [(ngModel)]="email"
+          id="displayName"
+          type="text"
+          name="displayName"
+          [(ngModel)]="displayName"
           required
-          email
-          autocomplete="email"
+          minlength="2"
+          placeholder="Enter your name"
+          autocomplete="name"
           aria-required="true"
+          [disabled]="isLoading()"
         />
       </div>
-      <div class="form-group">
-        <label for="password">
-          Password <span class="required" aria-label="required">*</span>
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-          minlength="6"
-          autocomplete="current-password"
-          aria-required="true"
-        />
-      </div>
-      <button type="submit" [disabled]="loginForm.invalid">Login</button>
-      <p class="alt-action">
-        Don't have an account?
-        <a routerLink="/signup">Sign up</a>
-      </p>
-      <button type="button" class="guest-btn" (click)="onGuestLogin()">
-        Continue as Guest
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="loginForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <app-spinner />
+        } @else {
+          <span>Let's Go! 🚀</span>
+        }
       </button>
     </form>
   </article>

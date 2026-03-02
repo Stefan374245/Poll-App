@@ -1,10 +1,13 @@
-<section class="auth-page" aria-label="Sign Up">
+<section class="auth-page" aria-label="Quick Signup">
   <article class="auth-card">
-    <h1>Sign Up</h1>
-    <form (ngSubmit)="onSignup()" #signupForm="ngForm" novalidate>
+    <h1>Join PollApp</h1>
+    <p class="auth-subtitle">Create your account in seconds ⚡</p>
+
+    <form (ngSubmit)="onQuickSignup()" #signupForm="ngForm" novalidate>
+      <!-- Name Input -->
       <div class="form-group">
         <label for="displayName">
-          Display Name <span class="required" aria-label="required">*</span>
+          Your Name <span class="required" aria-label="required">*</span>
         </label>
         <input
           id="displayName"
@@ -13,44 +16,29 @@
           [(ngModel)]="displayName"
           required
           minlength="2"
+          placeholder="Enter your name"
           autocomplete="name"
           aria-required="true"
+          [disabled]="isLoading()"
         />
+        <p class="form-hint">A unique avatar will be generated for you automatically</p>
       </div>
-      <div class="form-group">
-        <label for="email">
-          E-Mail <span class="required" aria-label="required">*</span>
-        </label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          [(ngModel)]="email"
-          required
-          email
-          autocomplete="email"
-          aria-required="true"
-        />
-      </div>
-      <div class="form-group">
-        <label for="password">
-          Password <span class="required" aria-label="required">*</span>
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-          minlength="6"
-          autocomplete="new-password"
-          aria-required="true"
-        />
-      </div>
-      <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="signupForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <app-spinner />
+        } @else {
+          <span>Create Account 🎉</span>
+        }
+      </button>
+
       <p class="alt-action">
-        Already have an account?
-        <a routerLink="/login">Login</a>
+        Already joined?
+        <a routerLink="/login">Login here</a>
       </p>
     </form>
   </article>
