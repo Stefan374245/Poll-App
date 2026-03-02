@@ -4,12 +4,20 @@
       <img src="logo/logo_orange.svg" alt="PollApp Logo" />
     </div>
 
-    <a
-      *ngIf="showCreateButton"
-      [routerLink]="routerLink"
-      class="btn btn--primary app-header__button"
-    >
-      <span>{{ buttonText }}</span>
-    </a>
+    <div class="app-header__actions">
+      <a
+        *ngIf="showCreateButton"
+        [routerLink]="routerLink"
+        class="btn btn--primary app-header__button"
+      >
+        <span>{{ buttonText }}</span>
+      </a>
+
+      @if (authService.isLoggedIn) {
+        <app-user-menu [user]="authService.currentUser()!" />
+      } @else {
+        <a routerLink="/login" class="app-header__login-link">Login</a>
+      }
+    </div>
   </div>
 </header>
