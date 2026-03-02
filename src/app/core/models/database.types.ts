@@ -91,6 +91,7 @@ export interface Database {
           id: string;
           survey_id: string;
           text: string;
+          hint: string | null;
           allow_multiple: boolean;
           position: number;
           created_at: string;
@@ -99,6 +100,7 @@ export interface Database {
           id?: string;
           survey_id: string;
           text: string;
+          hint?: string | null;
           allow_multiple?: boolean;
           position?: number;
           created_at?: string;
@@ -107,6 +109,7 @@ export interface Database {
           id?: string;
           survey_id?: string;
           text?: string;
+          hint?: string | null;
           allow_multiple?: boolean;
           position?: number;
         };

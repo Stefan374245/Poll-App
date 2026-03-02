@@ -13,6 +13,7 @@ export interface SurveyOption {
 export interface SurveyQuestion {
   id: string;
   text: string;
+  hint?: string;
   allowMultiple: boolean;
   options: SurveyOption[];
 }
@@ -37,6 +38,7 @@ export interface Survey {
  */
 export interface CreateQuestionPayload {
   text: string;
+  hint?: string;
   allowMultiple: boolean;
   options: string[];
 }
@@ -96,7 +98,6 @@ export interface SurveyWithDetails extends Survey {
   creator: {
     id: string;
     displayName: string;
-    avatarUrl: string | null;
   };
   statistics: SurveyStatistics | null;
   userHasVoted: boolean;
