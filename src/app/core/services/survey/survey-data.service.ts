@@ -17,17 +17,22 @@ import type {
 } from '../../models';
 import type { Database } from '../../models/database.types';
 
-type SurveyInsert = Database['public']['Tables']['surveys']['Insert'];
-type SurveyRow = Database['public']['Tables']['surveys']['Row'];
-type QuestionInsert = Database['public']['Tables']['questions']['Insert'];
-type OptionInsert = Database['public']['Tables']['options']['Insert'];
-type QuestionRow = Database['public']['Tables']['questions']['Row'];
-type OptionRow = Database['public']['Tables']['options']['Row'];
-type UserRow = Database['public']['Tables']['users']['Row'];
-type VoteInsert = Database['public']['Tables']['votes']['Insert'];
-type VoteRow = Database['public']['Tables']['votes']['Row'];
+type DbSurvey = Database['public']['Tables']['surveys'];
+type DbQuestion = Database['public']['Tables']['questions'];
+type DbOption = Database['public']['Tables']['options'];
+type DbUser = Database['public']['Tables']['users'];
+type DbVote = Database['public']['Tables']['votes'];
 
-// Types for joined query results
+type SurveyInsert = DbSurvey['Insert'];
+type SurveyRow = DbSurvey['Row'];
+type QuestionInsert = DbQuestion['Insert'];
+type QuestionRow = DbQuestion['Row'];
+type OptionInsert = DbOption['Insert'];
+type OptionRow = DbOption['Row'];
+type UserRow = DbUser['Row'];
+type VoteInsert = DbVote['Insert'];
+type VoteRow = DbVote['Row'];
+
 interface SurveyWithJoins extends SurveyRow {
   creator: Partial<UserRow> | null;
   questions: Array<QuestionRow & { options: OptionRow[] }>;
@@ -79,33 +84,36 @@ export class SurveyDataService {
    * Creates a new survey.
    */
   async createSurvey(payload: CreateSurveyPayload): Promise<Survey> {
-    console.log('Creating survey with payload:', payload);
+    console.log('📝 Creating survey with payload:', payload);
 
     const surveyData: SurveyInsert = this.mapToInsertPayload(payload);
 
     const { data, error } = await this.supabase.client
       .from('surveys')
-      // Known Supabase typing issue - types are correct but not recognized by generic
-      // @ts-expect-error - Database types are properly typed but not inferred correctly by Supabase client
+      // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
       .insert(surveyData)
       .select()
       .single();
 
     if (error) {
-      console.error('Survey creation error:', error);
+      console.error('❌ Survey creation error:', error);
       throw this.createError(error);
     }
 
-    console.log('Survey created:', data);
+    console.log('✅ Survey created:', data);
 
-    // Create questions and options
     if (payload.questions && payload.questions.length > 0) {
-      const surveyRow = data as Database['public']['Tables']['surveys']['Row'];
+      const surveyRow = data as SurveyRow;
+      console.log('📋 Creating', payload.questions.length, 'questions...');
       await this.createQuestionsWithOptions(surveyRow.id, payload.questions);
+      console.log('✅ Questions created');
     }
 
+    console.log('🔄 Reloading all surveys...');
     await this.loadAllSurveys();
-    const surveyRow = data as Database['public']['Tables']['surveys']['Row'];
+    console.log('✅ Survey creation complete!');
+
+    const surveyRow = data as SurveyRow;
     return this.mapToSurvey(surveyRow);
   }
 
@@ -114,23 +122,22 @@ export class SurveyDataService {
    */
   private async createQuestionsWithOptions(
     surveyId: string,
-    questions: {text: string; allowMultiple: boolean; options: string[]}[]
+    questions: {text: string; hint?: string; allowMultiple: boolean; options: string[]}[]
   ): Promise<void> {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
 
-      // Insert question
       const questionInsert: QuestionInsert = {
         survey_id: surveyId,
         text: q.text,
+        hint: q.hint || null,
         allow_multiple: q.allowMultiple,
         position: i
       };
 
       const { data: questionData, error: questionError } = await this.supabase.client
         .from('questions')
-        // Known Supabase typing issue - types are correct but not recognized by generic
-        // @ts-expect-error - Database types are properly typed but not inferred correctly by Supabase client
+        // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
         .insert(questionInsert)
         .select()
         .single();
@@ -140,7 +147,6 @@ export class SurveyDataService {
         throw this.createError(questionError);
       }
 
-      // Insert options
       const questionRow = questionData as QuestionRow;
 
       if (q.options && q.options.length > 0) {
@@ -152,8 +158,7 @@ export class SurveyDataService {
 
         const { error: optionsError } = await this.supabase.client
           .from('options')
-          // Known Supabase typing issue - types are correct but not recognized by generic
-          // @ts-expect-error - Database types are properly typed but not inferred correctly by Supabase client
+          // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
           .insert(optionsData);
 
         if (optionsError) {
@@ -169,11 +174,11 @@ export class SurveyDataService {
    */
   async updateSurvey(
     id: string,
-    updates: Database['public']['Tables']['surveys']['Update']
+    updates: DbSurvey['Update']
   ): Promise<void> {
     const { error } = await this.supabase.client
       .from('surveys')
-      // @ts-ignore - Supabase typing will be resolved after generating types from project
+      // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
       .update(updates)
       .eq('id', id);
 
@@ -210,7 +215,8 @@ export class SurveyDataService {
     optionId: string,
     userId: string
   ): Promise<Vote> {
-    // Check deadline
+    console.log('🗳️ Submitting vote:', { surveyId, questionId, optionId, userId });
+
     const survey = await this.getSurveyById(surveyId);
     if (survey.deadline && new Date() > survey.deadline) {
       throw new Error('Survey deadline has passed');
@@ -223,21 +229,25 @@ export class SurveyDataService {
       user_id: userId
     };
 
+    console.log('📝 Vote data to insert:', voteData);
+
     const { data, error } = await this.supabase.client
       .from('votes')
-      // @ts-expect-error - Database types are properly typed but not inferred correctly by Supabase client
+      // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
       .insert(voteData)
       .select()
       .single();
 
     if (error) {
-      // Handle unique constraint violation
+      console.error('❌ Vote insert error:', error);
       if (error.code === '23505') {
+        console.error('⚠️ Duplicate vote detected for userId:', userId, 'optionId:', optionId);
         throw new Error('You have already voted for this option');
       }
       throw this.createError(error);
     }
 
+    console.log('✅ Vote submitted successfully:', data);
     const voteRow = data as VoteRow;
     return this.mapToVote(voteRow);
   }
@@ -312,7 +322,7 @@ export class SurveyDataService {
   private buildDetailedQuery(): string {
     return `
       *,
-      creator:users!creator_id (id, display_name, avatar_url),
+      creator:users!creator_id (id, display_name),
       questions (*, options (*))
     `;
   }
@@ -343,8 +353,7 @@ export class SurveyDataService {
   private mapCreator(creator: Partial<UserRow> | null) {
     return {
       id: creator?.id || '',
-      displayName: creator?.display_name || 'Unknown',
-      avatarUrl: creator?.avatar_url || null
+      displayName: creator?.display_name || 'Unknown'
     };
   }
 
@@ -370,6 +379,7 @@ export class SurveyDataService {
     return questions.map(q => ({
       id: q.id,
       text: q.text,
+      hint: q.hint || undefined,
       allowMultiple: q.allow_multiple,
       options: this.mapOptions(q.options || [])
     }));

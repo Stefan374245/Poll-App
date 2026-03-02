@@ -5,12 +5,13 @@ import { SupabaseService } from './supabase/supabase.service';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import type { Database } from '../models/database.types';
 
-type UserRow = Database['public']['Tables']['users']['Row'];
-type UserInsert = Database['public']['Tables']['users']['Insert'];
+type DbUser = Database['public']['Tables']['users'];
+type UserRow = DbUser['Row'];
+type UserInsert = DbUser['Insert'];
 
 /**
  * Service for authentication management.
- * Supports login, signup and guest access with Supabase.
+ * Supports quick login with display name (creates guest accounts).
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -39,7 +40,6 @@ export class AuthService {
       await this.loadUserProfile(user);
     }
 
-    // Listen to auth state changes
     this.supabase.client.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user);
       if (session?.user) {
@@ -62,33 +62,41 @@ export class AuthService {
       .single();
 
     if (error) {
-      console.error(`Error loading user profile (attempt ${retryCount + 1}):`, {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      });
-
-      // Retry once after 2 seconds (give trigger time to complete)
-      if (retryCount === 0) {
-        console.log('Retrying profile load in 2 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        return this.loadUserProfile(supabaseUser, retryCount + 1);
-      }
-
-      // After retry failed, try to create profile manually
-      console.log('Profile not found after retry, attempting manual creation...');
-      await this.ensureUserProfile(supabaseUser);
+      await this.handleProfileLoadError(supabaseUser, retryCount, error);
       return;
     }
 
-    console.log('✅ Profile loaded successfully:', (data as UserRow).display_name);
-    const profileData = data as UserRow;
+    this.setUserFromProfile(data as UserRow);
+  }
+
+  /** Handles profile loading errors with retry logic. */
+  private async handleProfileLoadError(
+    supabaseUser: SupabaseUser,
+    retryCount: number,
+    error: any
+  ): Promise<void> {
+    console.error(`Error loading user profile (attempt ${retryCount + 1}):`, {
+      code: error.code,
+      message: error.message
+    });
+
+    if (retryCount === 0) {
+      console.log('Retrying profile load in 2 seconds...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return this.loadUserProfile(supabaseUser, retryCount + 1);
+    }
+
+    console.log('Profile not found after retry, attempting manual creation...');
+    await this.ensureUserProfile(supabaseUser);
+  }
+
+  /** Sets current user from profile data. */
+  private setUserFromProfile(profileData: UserRow): void {
+    console.log('✅ Profile loaded successfully:', profileData.display_name);
     const user: User = {
       id: profileData.id,
       displayName: profileData.display_name,
       email: profileData.email,
-      avatarUrl: profileData.avatar_url || '',
       isGuest: profileData.is_guest,
     };
     this.currentUserSignal.set(user);
@@ -98,185 +106,190 @@ export class AuthService {
   private async ensureUserProfile(supabaseUser: SupabaseUser): Promise<void> {
     console.log('🔧 Ensuring user profile exists for:', supabaseUser.email);
 
-    // Extract metadata
-    const displayName = supabaseUser.user_metadata['display_name'] || supabaseUser.email?.split('@')[0] || 'User';
-    const avatarUrl = supabaseUser.user_metadata['avatar_url'] || `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.id}`;
-    const isGuest = supabaseUser.user_metadata['is_guest'] === true || supabaseUser.user_metadata['is_guest'] === 'true';
-
-    const profileInsert: UserInsert = {
-      id: supabaseUser.id,
-      email: supabaseUser.email || '',
-      display_name: displayName,
-      avatar_url: avatarUrl,
-      is_guest: isGuest
-    };
-
+    const profileInsert = this.createProfileInsert(supabaseUser);
     const { data, error } = await this.supabase.client
       .from('users')
-      // @ts-expect-error - RLS policy causes type inference issue, but insert works at runtime
+      // @ts-expect-error - Supabase RLS policies cause type inference issues, but operation works at runtime
       .insert(profileInsert)
       .select()
       .single();
 
     if (error) {
-      console.error('❌ Manual profile creation failed:', {
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-
-      // If profile already exists (race condition), try to load it
-      if (error.code === '23505') { // Unique constraint violation
-        console.log('⚠️ Profile already exists, attempting to load...');
-        const { data: existingProfile } = await this.supabase.client
-          .from('users')
-          .select('*')
-          .eq('id', supabaseUser.id)
-          .single();
-
-        if (existingProfile) {
-          console.log('✅ Loaded existing profile');
-          const profileData = existingProfile as UserRow;
-          const user: User = {
-            id: profileData.id,
-            displayName: profileData.display_name,
-            email: profileData.email,
-            avatarUrl: profileData.avatar_url || '',
-            isGuest: profileData.is_guest,
-          };
-          this.currentUserSignal.set(user);
-          return;
-        }
-      }
-
-      // Last resort: Use metadata as fallback
-      console.warn('⚠️ Using auth metadata as fallback');
-      const user: User = {
-        id: supabaseUser.id,
-        displayName: displayName,
-        email: supabaseUser.email || '',
-        avatarUrl: avatarUrl,
-        isGuest: isGuest,
-      };
-      this.currentUserSignal.set(user);
+      await this.handleProfileCreationError(error, supabaseUser, profileInsert);
       return;
     }
 
-    console.log('✅ Profile created manually:', (data as UserRow).display_name);
-    const profileData = data as UserRow;
+    this.setUserFromProfile(data as UserRow);
+  }
+
+  /** Creates profile insert payload from Supabase user. */
+  private createProfileInsert(supabaseUser: SupabaseUser): UserInsert {
+    const displayName = supabaseUser.user_metadata['display_name']
+      || supabaseUser.email?.split('@')[0]
+      || 'User';
+    const isGuest = supabaseUser.user_metadata['is_guest'] === true
+      || supabaseUser.user_metadata['is_guest'] === 'true';
+
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      display_name: displayName,
+      is_guest: isGuest
+    };
+  }
+
+  /** Handles profile creation errors with fallback strategies. */
+  private async handleProfileCreationError(
+    error: any,
+    supabaseUser: SupabaseUser,
+    profileInsert: UserInsert
+  ): Promise<void> {
+    console.error('❌ Manual profile creation failed:', {
+      code: error.code,
+      message: error.message
+    });
+
+    if (error.code === '23505') {
+      await this.loadExistingProfile(supabaseUser);
+      return;
+    }
+
+    this.setUserFromMetadata(supabaseUser, profileInsert);
+  }
+
+  /** Attempts to load existing profile (handles race conditions). */
+  private async loadExistingProfile(supabaseUser: SupabaseUser): Promise<void> {
+    console.log('⚠️ Profile already exists, attempting to load...');
+    const { data: existingProfile } = await this.supabase.client
+      .from('users')
+      .select('*')
+      .eq('id', supabaseUser.id)
+      .single();
+
+    if (existingProfile) {
+      console.log('✅ Loaded existing profile');
+      this.setUserFromProfile(existingProfile as UserRow);
+    }
+  }
+
+  /** Sets user from metadata as fallback. */
+  private setUserFromMetadata(supabaseUser: SupabaseUser, profileInsert: UserInsert): void {
+    console.warn('⚠️ Using auth metadata as fallback');
     const user: User = {
-      id: profileData.id,
-      displayName: profileData.display_name,
-      email: profileData.email,
-      avatarUrl: profileData.avatar_url || '',
-      isGuest: profileData.is_guest,
+      id: supabaseUser.id,
+      displayName: profileInsert.display_name,
+      email: supabaseUser.email || '',
+      isGuest: profileInsert.is_guest || false,
     };
     this.currentUserSignal.set(user);
   }
 
-  /** Logs in with email and password. */
-  async login(email: string, password: string): Promise<void> {
-    console.log('🔐 Attempting login for:', email);
+  /** Quick login with display name only - creates guest account. */
+  async quickLogin(displayName: string): Promise<void> {
+    console.log('🎭 Quick login for:', displayName);
 
-    const { data, error } = await this.supabase.client.auth.signInWithPassword({
-      email,
-      password
-    });
+    await this.clearAllSessions();
+
+    const credentials = this.generateGuestCredentials();
+    const { data, error } = await this.createGuestAccount(displayName, credentials);
 
     if (error) {
-      console.error('❌ Login error:', {
-        code: error.status,
-        message: error.message,
-        name: error.name
-      });
+      this.handleQuickLoginError(error);
       throw error;
     }
 
     if (data.user) {
-      console.log('✅ Login successful, loading profile...');
-      await this.loadUserProfile(data.user);
+      await this.finalizeGuestLogin(data.user);
     }
   }
 
-  /** Creates a new account. */
-  async signup(displayName: string, email: string, password: string): Promise<void> {
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`;
+  /** Clears all existing sessions completely. */
+  private async clearAllSessions(): Promise<void> {
+    console.log('🧹 Clearing all sessions completely...');
+    await this.supabase.client.auth.signOut();
 
-    console.log('📝 Creating account for:', email);
+    this.currentUserSignal.set(null);
+    this.supabaseUserSignal.set(null);
 
-    const { data, error } = await this.supabase.client.auth.signUp({
-      email,
-      password,
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const { data: { session } } = await this.supabase.client.auth.getSession();
+    if (session) {
+      this.forceSessionCleanup();
+    }
+
+    console.log('✅ Session completely cleared');
+  }
+
+  /** Forces manual session cleanup from localStorage. */
+  private forceSessionCleanup(): void {
+    if (typeof window !== 'undefined') {
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('sb-') || key.includes('supabase')) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+  }
+
+  /** Generates unique guest credentials. */
+  private generateGuestCredentials(): { email: string; password: string } {
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2, 8);
+    const email = `guest_${timestamp}_${randomId}@pollapp.guest`;
+    const password = Math.random().toString(36).substring(2, 15)
+      + Math.random().toString(36).substring(2, 15);
+
+    return { email, password };
+  }
+
+  /** Creates a guest account with Supabase. */
+  private async createGuestAccount(
+    displayName: string,
+    credentials: { email: string; password: string }
+  ) {
+    return await this.supabase.client.auth.signUp({
+      email: credentials.email,
+      password: credentials.password,
       options: {
         data: {
           display_name: displayName,
-          avatar_url: avatarUrl,
-          is_guest: false
-        }
-      }
-    });
-
-    if (error) {
-      console.error('❌ Signup error:', {
-        code: error.status,
-        message: error.message,
-        name: error.name
-      });
-      throw error;
-    }
-
-    if (data.user) {
-      console.log('✅ Auth account created, loading/creating profile...');
-      await this.loadUserProfile(data.user);
-    }
-  }
-
-  /** Creates a guest session. */
-  async loginAsGuest(): Promise<void> {
-    const guestEmail = `guest_${Date.now()}@guest.pollapp.com`;
-    const guestPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=guest${Date.now()}`;
-
-    console.log('🎭 Creating guest account:', guestEmail);
-
-    const { data, error } = await this.supabase.client.auth.signUp({
-      email: guestEmail,
-      password: guestPassword,
-      options: {
-        data: {
-          display_name: 'Guest User',
-          avatar_url: avatarUrl,
           is_guest: true
         }
       }
     });
+  }
 
-    if (error) {
-      console.error('❌ Guest signup error:', {
-        code: error.status,
-        message: error.message,
-        name: error.name
-      });
-      throw error;
-    }
+  /** Handles quick login errors. */
+  private handleQuickLoginError(error: any): void {
+    console.error('❌ Quick login error:', {
+      code: error.status,
+      message: error.message,
+      name: error.name
+    });
+  }
 
-    if (data.user) {
-      console.log('✅ Guest account created, loading profile...');
-      await this.loadUserProfile(data.user);
-    }
+  /** Finalizes guest login by loading profile. */
+  private async finalizeGuestLogin(user: SupabaseUser): Promise<void> {
+    console.log('✅ Guest account created with UUID:', user.id);
+    console.log('📧 Email:', user.email);
+    await this.loadUserProfile(user);
   }
 
   /** Logs out the current user. */
   async logout(): Promise<void> {
+    const userName = this.currentUserSignal()?.displayName;
+
     const { error } = await this.supabase.client.auth.signOut();
 
     if (error) {
-      console.error('Signout error:', error);
-      throw error;
+      console.error('❌ Signout error:', error);
     }
 
     this.currentUserSignal.set(null);
     this.supabaseUserSignal.set(null);
+
     this.router.navigate(['/login']);
   }
 
