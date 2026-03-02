@@ -3,6 +3,7 @@
   [disabled]="disabled()"
   [attr.aria-label]="ariaLabel() || null"
   type="button"
+  (click)="onClick()"
 >
   <!-- Icon (leading) -->
   @if (icon() !== 'none') {

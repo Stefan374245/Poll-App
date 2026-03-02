@@ -6,7 +6,7 @@
   </h3>
 
   <!-- Multi-select hint -->
-  @if (question().allowMultiple) {
+  @if (question().hint || question().allowMultiple) {
     <p class="question-block__hint">
       <img
         src="images/edit%20%26%26%20checkbox/checked.svg"
@@ -14,7 +14,7 @@
         class="question-block__hint-icon"
         aria-hidden="true"
       />
-      More than one answers are possible.
+      {{ question().hint || 'More than one answer is possible.' }}
     </p>
   }
 
