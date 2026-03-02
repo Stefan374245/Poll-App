@@ -7,6 +7,7 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
 
 import { AuthService } from '../auth.service';
+import { URGENT_SURVEY_THRESHOLD_MS } from '../../constants/survey.constants';
 import type { SurveyWithDetails, SurveyFilter, Vote } from '../../models';
 
 @Injectable({
@@ -91,6 +92,10 @@ export class SurveyStateService {
    * Replaces all surveys in state.
    */
   setSurveys(surveys: SurveyWithDetails[]): void {
+    console.log('📝 Setting surveys in state:', surveys.length);
+    surveys.forEach(s => {
+      console.log('  -', s.title, '| isActive:', s.isActive, '| deadline:', s.deadline, '| category:', s.category);
+    });
     this._surveys.set(surveys);
   }
 
@@ -177,14 +182,18 @@ export class SurveyStateService {
    * Filters active surveys.
    */
   private filterActiveSurveys(surveys: SurveyWithDetails[]): SurveyWithDetails[] {
-    return surveys.filter(survey => this.isSurveyActive(survey));
+    const active = surveys.filter(survey => this.isSurveyActive(survey));
+    console.log('🔍 Filtering active surveys:', surveys.length, '→', active.length);
+    return active;
   }
 
   /**
    * Filters past surveys.
    */
   private filterPastSurveys(surveys: SurveyWithDetails[]): SurveyWithDetails[] {
-    return surveys.filter(survey => !this.isSurveyActive(survey));
+    const past = surveys.filter(survey => !this.isSurveyActive(survey));
+    console.log('🔍 Filtering past surveys:', surveys.length, '→', past.length);
+    return past;
   }
 
   /**
@@ -214,37 +223,47 @@ export class SurveyStateService {
    */
   private isSurveyActive(survey: SurveyWithDetails): boolean {
     if (!survey.isActive) {
+      console.log('  ❌', survey.title, 'is NOT active (isActive = false)');
       return false;
     }
 
     if (!survey.deadline) {
+      console.log('  ✅', survey.title, 'is active (no deadline)');
       return true;
     }
 
-    return new Date(survey.deadline) > new Date();
+    const isNotExpired = new Date(survey.deadline) > new Date();
+    console.log('  ' + (isNotExpired ? '✅' : '❌'), survey.title, 'deadline:', survey.deadline, 'expired:', !isNotExpired);
+    return isNotExpired;
   }
 
   /**
-   * Checks if survey deadline is urgent (< 24 hours).
+   * Checks if survey deadline is urgent (< 3 days).
    */
   private isSurveyUrgent(survey: SurveyWithDetails): boolean {
     if (!survey.deadline) {
       return false;
     }
 
-    const hours = this.calculateHoursRemaining(survey.deadline);
-    return hours > 0 && hours < 24;
+    const milliseconds = this.calculateMillisecondsRemaining(survey.deadline);
+    return milliseconds > 0 && milliseconds < URGENT_SURVEY_THRESHOLD_MS;
   }
 
   /**
    * Calculates hours remaining until deadline.
    */
   private calculateHoursRemaining(deadline: Date): number {
+    const milliseconds = this.calculateMillisecondsRemaining(deadline);
+    return milliseconds / (1000 * 60 * 60);
+  }
+
+  /**
+   * Calculates milliseconds remaining until deadline.
+   */
+  private calculateMillisecondsRemaining(deadline: Date): number {
     const now = new Date();
     const deadlineDate = new Date(deadline);
-    const milliseconds = deadlineDate.getTime() - now.getTime();
-
-    return milliseconds / (1000 * 60 * 60);
+    return deadlineDate.getTime() - now.getTime();
   }
 
   /**
