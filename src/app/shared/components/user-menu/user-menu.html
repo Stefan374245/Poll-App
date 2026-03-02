@@ -1,0 +1,36 @@
+<div class="user-menu">
+  <button
+    class="user-menu__trigger-btn"
+    (click)="toggleMenu($event)"
+    [attr.aria-label]="'Open menu for ' + user().displayName"
+    [attr.aria-expanded]="isOpen()"
+    type="button">
+    <span class="user-menu__name">{{ user().displayName }}</span>
+    <span class="user-menu__icon">▼</span>
+  </button>
+
+  @if (isOpen()) {
+    <div class="dropdown-menu">
+      <div class="dropdown-menu__header">
+        <div class="dropdown-menu__user-info">
+          <div class="dropdown-menu__user-text">
+            <div class="dropdown-menu__name">{{ user().displayName }}</div>
+            @if (!user().isGuest) {
+              <div class="dropdown-menu__email">{{ user().email }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="dropdown-menu__divider"></div>
+
+      <button
+        class="dropdown-menu__item"
+        (click)="onLogout()"
+        type="button">
+        <span class="dropdown-menu__item-icon">⎋</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  }
+</div>
